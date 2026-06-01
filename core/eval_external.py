@@ -53,9 +53,10 @@ def windows(text: str, size: int = 38, stride: int = 28, cap: int = 14):
 
 
 def call_features(text, tok, sess, det, order):
-    """Return (max fused risk, set of tactics that fired anywhere in the call)."""
+    """Return (max fused risk, union of tactics, max tactics CO-OCCURRING in one window)."""
     best = 0.0
     tac = set()
+    max_cooccur = 0
     for w in windows(text):
         e = tok(w, return_tensors="np", padding="max_length", max_length=MAX_LEN,
                 truncation=True, return_token_type_ids=False)
@@ -65,7 +66,8 @@ def call_features(text, tok, sess, det, order):
         conf = {order[i]: float(p) for i, p in enumerate(probs) if p >= 0.5}
         best = max(best, det.fuse(conf))
         tac |= set(conf)
-    return best, tac
+        max_cooccur = max(max_cooccur, len(conf))  # tactics together in a single window
+    return best, tac, max_cooccur
 
 
 def main():
@@ -76,34 +78,27 @@ def main():
     bb_scam, bb_legit = [], []
     for r in bb:
         text = re.sub(r"\b(Suspect|Innocent)\s*:\s*", " ", r["dialogue"])
-        s, tac = call_features(text, *engine)
-        (bb_scam if r["labels"] == "1" else bb_legit).append((s, tac, r.get("type", "?")))
+        s, tac, co = call_features(text, *engine)
+        (bb_scam if r["labels"] == "1" else bb_legit).append((s, tac, co))
 
     ftc = [r for r in csv.DictReader(open(os.path.join(EXT, "ftc_metadata.csv")))
            if r.get("language") == "en" and r.get("transcript", "").strip()]
     ftc_feats = [call_features(r["transcript"], *engine) for r in ftc]
 
     rules = [
-        ("score>=0.75 (HIGH)", lambda s, t: s >= 0.75),
-        (">=2 distinct tactics", lambda s, t: len(t) >= 2),
-        ("HIGH & >=2 tactics", lambda s, t: s >= 0.75 and len(t) >= 2),
-        ("HIGH & >=3 tactics", lambda s, t: s >= 0.75 and len(t) >= 3),
+        ("HIGH score (>=0.75)", lambda s, t, co: s >= 0.75),
+        (">=2 CO-OCCURRING tactics", lambda s, t, co: co >= 2),
+        (">=3 CO-OCCURRING tactics", lambda s, t, co: co >= 3),
     ]
-    print(f"\nDecision-rule comparison:")
-    print(f"{'rule':>24} | {'BB recall':>9} {'BB prec':>8} {'BB acc':>7} | {'FTC recall':>11}")
-    print("-" * 70)
+    print(f"\nDecision-rule comparison (co-occurring = tactics together in ONE window):")
+    print(f"{'rule':>26} | {'BB recall':>9} {'BB prec':>8} {'BB acc':>7} | {'FTC recall':>11}")
+    print("-" * 72)
     for name, rule in rules:
-        tp = sum(rule(s, t) for s, t, _ in bb_scam); fn = len(bb_scam) - tp
-        fp = sum(rule(s, t) for s, t, _ in bb_legit); tn = len(bb_legit) - fp
+        tp = sum(rule(*x) for x in bb_scam); fn = len(bb_scam) - tp
+        fp = sum(rule(*x) for x in bb_legit); tn = len(bb_legit) - fp
         rec = tp / (tp + fn or 1); prec = tp / (tp + fp or 1); acc = (tp + tn) / (len(bb_scam) + len(bb_legit))
-        ftc_rec = sum(rule(s, t) for s, t in ftc_feats) / len(ftc_feats)
-        print(f"{name:>24} | {rec:>8.0%} {prec:>8.0%} {acc:>7.0%} | {ftc_rec:>11.0%}")
-
-    # diagnosis: which legit types we over-flag, and on which tactics
-    flagged_legit = [(t, typ) for s, t, typ in bb_legit if s >= 0.75]
-    print(f"\nDiagnosis — BothBosu LEGIT calls flagged at HIGH: {len(flagged_legit)}/{len(bb_legit)}")
-    print("  by legit type:", dict(Counter(typ for _, typ in flagged_legit)))
-    print("  tactics firing on legit:", dict(Counter(x for t, _ in flagged_legit for x in t)))
+        ftc_rec = sum(rule(*x) for x in ftc_feats) / len(ftc_feats)
+        print(f"{name:>26} | {rec:>8.0%} {prec:>8.0%} {acc:>7.0%} | {ftc_rec:>11.0%}")
     print(f"\n(BB: {len(bb_scam)} scam / {len(bb_legit)} legit | FTC: {len(ftc_feats)} real English robocalls)")
     return 0
 

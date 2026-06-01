@@ -13,3 +13,29 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Rust build artifacts
+target/
+
+# Flutter / Dart
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.g.dart
+
+# Android build
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Gradle
+.gradle/
+local.properties
+
+# Model weights (large binaries — commit intentionally if needed)
+*.pt
+*.pth
+*.bin
+*.safetensors

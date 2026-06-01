@@ -1,0 +1,86 @@
+{
+  "version": "0.1.0",
+  "description": "Kavach scam-tactic taxonomy. Each tactic is a class the on-device intent classifier predicts per transcript window. `cues` seed the reference detector and the labeling guide; `weight` feeds risk fusion; `explanation` is the pre-vetted, plain-language line shown to the user (never LLM-generated).",
+  "tactics": [
+    {
+      "id": "URGENCY",
+      "name": "Manufactured urgency",
+      "weight": 0.7,
+      "cues": ["right now", "immediately", "before it's too late", "you have to act", "no time", "hurry", "in the next hour", "deadline", "expires today", "can't wait"],
+      "explanation": "This caller is rushing you. Real family and real institutions let you take your time.",
+      "action": "Slow down. Hang up and call back on a number you already trust."
+    },
+    {
+      "id": "SECRECY",
+      "name": "Secrecy demand",
+      "weight": 0.85,
+      "cues": ["don't tell anyone", "keep this between us", "don't tell mom", "don't tell your family", "this is confidential", "promise you won't say", "they can't know"],
+      "explanation": "This caller wants you to keep it secret. Scammers isolate you so no one can warn you.",
+      "action": "Tell someone you trust right now. Secrecy is a red flag, not a favor."
+    },
+    {
+      "id": "UNTRACEABLE_PAYMENT",
+      "name": "Untraceable-payment request",
+      "weight": 0.95,
+      "cues": ["gift card", "gift cards", "google play card", "apple card", "steam card", "bitcoin", "crypto", "wire transfer", "western union", "moneygram", "zelle", "cash app", "go to the store", "read me the numbers", "buy a card"],
+      "explanation": "This caller wants gift cards, crypto, or a wire transfer. No real agency or family member is ever paid this way.",
+      "action": "Stop. Do not buy or send anything. This is how scammers take money they can't be forced to return."
+    },
+    {
+      "id": "AUTHORITY_IMPERSONATION",
+      "name": "Authority impersonation",
+      "weight": 0.75,
+      "cues": ["this is the police", "i'm an officer", "from the irs", "from the tax department", "social security", "your warrant", "i'm your lawyer", "from your bank's fraud team", "federal agent", "you will be arrested"],
+      "explanation": "This caller claims to be police, a bank, or the government. Real officials don't demand payment or secrecy over the phone.",
+      "action": "Hang up and call the agency back using the number on their official website or your card."
+    },
+    {
+      "id": "DISTRESS_HOOK",
+      "name": "Emotional distress hook",
+      "weight": 0.8,
+      "cues": ["i'm in jail", "i've been arrested", "i'm in the hospital", "there's been an accident", "i'm kidnapped", "they're going to hurt me", "i'm in trouble", "please help me", "i'm scared", "i need bail"],
+      "explanation": "This caller is using fear about a loved one to stop you thinking clearly. That panic is the attack.",
+      "action": "Take a breath. Hang up and call your loved one directly on their own number to check they're safe."
+    },
+    {
+      "id": "ISOLATION",
+      "name": "Isolation / stay-on-the-line",
+      "weight": 0.8,
+      "cues": ["don't hang up", "stay on the line", "don't call anyone", "keep me on the phone", "don't put me on hold", "don't talk to anyone else", "stay with me"],
+      "explanation": "This caller won't let you hang up. That's so no one else can warn you it's a scam.",
+      "action": "It is always safe to hang up. Do it, then verify through someone you trust."
+    },
+    {
+      "id": "IDENTITY_PROBE",
+      "name": "Credential / verification probe",
+      "weight": 0.9,
+      "cues": ["your password", "your pin", "one-time code", "otp", "verification code", "your social security number", "your card number", "read me the code", "confirm your account", "your cvv", "your date of birth"],
+      "explanation": "This caller is asking for a code, PIN, or password. Real institutions never ask you to read these out.",
+      "action": "Never share codes or passwords by phone. Hang up."
+    },
+    {
+      "id": "RELATIONSHIP_SPOOF",
+      "name": "Relationship spoof",
+      "weight": 0.6,
+      "cues": ["it's me", "it's your grandson", "it's your son", "mom it's me", "dad it's me", "don't you recognize my voice", "my voice sounds different because", "i have a cold"],
+      "explanation": "This caller claims to be family but excuses a strange voice. AI clones sound 'a little off'.",
+      "action": "Ask your Watchword — the family safe-word only the real person knows."
+    }
+  ],
+  "risk_levels": [
+    {"id": "SAFE", "label": "Looks normal", "min_score": 0.0, "color": "#1f9d55"},
+    {"id": "CAUTION", "label": "Be careful", "min_score": 0.45, "color": "#f0b400"},
+    {"id": "HIGH", "label": "Likely a scam", "min_score": 0.75, "color": "#e63946"}
+  ],
+  "fusion": {
+    "comment": "Risk score combines per-tactic confidences, the acoustic synthetic-voice signal, and dangerous combinations. Co-occurrence of money + (urgency|secrecy|distress) is near-certain fraud and is boosted.",
+    "combo_boosts": [
+      {"tactics": ["UNTRACEABLE_PAYMENT", "URGENCY"], "boost": 0.2},
+      {"tactics": ["UNTRACEABLE_PAYMENT", "SECRECY"], "boost": 0.25},
+      {"tactics": ["DISTRESS_HOOK", "UNTRACEABLE_PAYMENT"], "boost": 0.3},
+      {"tactics": ["AUTHORITY_IMPERSONATION", "UNTRACEABLE_PAYMENT"], "boost": 0.25},
+      {"tactics": ["IDENTITY_PROBE", "URGENCY"], "boost": 0.15}
+    ],
+    "acoustic_weight": 0.15
+  }
+}
