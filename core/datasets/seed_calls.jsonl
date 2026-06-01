@@ -1,0 +1,20 @@
+{"text": "Grandma it's me, your grandson. My voice sounds weird because I have a cold.", "label": "scam", "tactics": ["RELATIONSHIP_SPOOF"]}
+{"text": "I've been in a car accident and I'm in jail, please you have to help me right now.", "label": "scam", "tactics": ["DISTRESS_HOOK", "URGENCY"]}
+{"text": "Please don't tell mom or dad about this, keep it between us okay?", "label": "scam", "tactics": ["SECRECY"]}
+{"text": "I need you to go to the store and buy three google play gift cards and read me the numbers.", "label": "scam", "tactics": ["UNTRACEABLE_PAYMENT"]}
+{"text": "This is Officer Davis with the police, there is a warrant and you will be arrested unless you pay the fine today.", "label": "scam", "tactics": ["AUTHORITY_IMPERSONATION", "URGENCY"]}
+{"text": "Don't hang up, stay on the line with me, don't call anyone else.", "label": "scam", "tactics": ["ISOLATION"]}
+{"text": "I'm from your bank's fraud team, just confirm your one-time code so we can secure the account.", "label": "scam", "tactics": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
+{"text": "Send the bail money by wire transfer immediately, there's no time and don't tell anyone.", "label": "scam", "tactics": ["UNTRACEABLE_PAYMENT", "URGENCY", "SECRECY"]}
+{"text": "It's me, I'm scared, they're going to hurt me if you don't send bitcoin now.", "label": "scam", "tactics": ["DISTRESS_HOOK", "UNTRACEABLE_PAYMENT", "URGENCY"]}
+{"text": "Read me the verification code I just texted you so I can confirm it's really you.", "label": "scam", "tactics": ["IDENTITY_PROBE"]}
+{"text": "From the tax department, you owe back taxes and must pay with apple cards before the deadline today.", "label": "scam", "tactics": ["AUTHORITY_IMPERSONATION", "UNTRACEABLE_PAYMENT", "URGENCY"]}
+{"text": "Don't you recognize my voice? It's your son, I'm in trouble and I need cash fast.", "label": "scam", "tactics": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK", "URGENCY"]}
+{"text": "Hi, this is Dr. Mehta's office calling to confirm your appointment on Thursday at ten.", "label": "legit", "tactics": []}
+{"text": "Hey, it's Priya, are we still on for coffee this weekend?", "label": "legit", "tactics": []}
+{"text": "Your package is out for delivery and should arrive between two and four today.", "label": "legit", "tactics": []}
+{"text": "Mom, just calling to say I landed safely, talk later, love you.", "label": "legit", "tactics": []}
+{"text": "This is the library, the book you reserved is now available for pickup.", "label": "legit", "tactics": []}
+{"text": "Hi, I'm returning your call about the plumbing quote for the kitchen sink.", "label": "legit", "tactics": []}
+{"text": "It's your sister, dinner is at seven, bring the dessert you promised.", "label": "legit", "tactics": []}
+{"text": "Reminder from the dentist: your cleaning is tomorrow morning, reply to reschedule.", "label": "legit", "tactics": []}
