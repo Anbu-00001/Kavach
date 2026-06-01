@@ -1,121 +1,143 @@
+// main.dart — Kavach app: state, navigation, and the live demo timeline.
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'theme.dart';
+import 'data.dart';
+import 'screens.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() => runApp(const KavachApp());
+
+class KavachApp extends StatefulWidget {
+  const KavachApp({super.key});
+  @override
+  State<KavachApp> createState() => _KavachAppState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _KavachAppState extends State<KavachApp> {
+  String screen = 'onboarding';
+  bool dark = false;
+  double scale = 1.0;
+  final Color accent = hx('#0E7C86');
+  String watchword = 'Marigold';
+  String? guardian = 'Priya';
+  bool armed = false;
+  bool demoActive = false;
+  bool minimal = false;
+  Verdict live = buildVerdict('HIGH');
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+  String sumLevel = 'HIGH';
+  List<String> sumTactics = kVerdicts['HIGH']!.tactics;
+  String sumGuardian = 'sent';
+
+  final List<Timer> _timers = [];
+  void _clear() {
+    for (final t in _timers) {
+      t.cancel();
+    }
+    _timers.clear();
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  void go(String s) {
+    if (s != 'live') {
+      _clear();
+      demoActive = false;
+    }
+    setState(() => screen = s);
+  }
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  /// Play the cloned-voice "grandson in trouble" demo: SAFE → CAUTION → HIGH.
+  void startDemo() {
+    _clear();
+    demoActive = true;
+    armed = true;
+    setState(() => screen = 'live');
+    final acc = <Map<String, String>>[];
+    for (final beat in kDemoBeats) {
+      _timers.add(Timer(Duration(milliseconds: beat.at), () {
+        if (beat.who == 'them') acc.add({'who': beat.who, 'line': beat.line});
+        setState(() {
+          live = Verdict(
+            beat.level,
+            acc.where((l) => l['who'] == 'them').toList(),
+            beat.tactics,
+            deriveExp(beat.level, beat.tactics),
+            beat.guardian,
+            beat.score,
+            live: true,
+          );
+        });
+      }));
+    }
+  }
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
+  void onHangup() {
+    _clear();
+    demoActive = false;
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      sumLevel = live.level;
+      sumTactics = live.tactics;
+      sumGuardian = live.guardian;
+      screen = 'summary';
     });
   }
 
+  void onSafe() {
+    _clear();
+    demoActive = false;
+    armed = true;
+    setState(() => screen = 'home');
+  }
+
+  @override
+  void dispose() {
+    _clear();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+    final pal = palette(dark, accent);
+    Widget body;
+    switch (screen) {
+      case 'watchword':
+        body = WatchwordScreen(watchword: watchword, onChanged: (v) => setState(() => watchword = v), onBack: () => go('onboarding'), onSave: () => go('guardian'));
+        break;
+      case 'guardian':
+        body = GuardianScreen(guardian: guardian, onSelect: (v) => setState(() => guardian = v), onBack: () => go('watchword'), onFinish: () => go('home'));
+        break;
+      case 'home':
+        body = HomeScreen(armed: armed, watchword: watchword, guardian: guardian, onArm: () => setState(() => armed = true), onStop: () => setState(() => armed = false), onDemo: startDemo, onProfile: () => go('onboarding'));
+        break;
+      case 'live':
+        body = LiveShieldScreen(v: live, watchword: watchword, guardianName: guardian, minimal: minimal, onHangup: onHangup, onSafe: onSafe);
+        break;
+      case 'summary':
+        body = SummaryScreen(level: sumLevel, guardianStatus: sumGuardian, tactics: sumTactics, guardianName: guardian, onHome: () => go('home'));
+        break;
+      default:
+        body = OnboardingScreen(onTurnOn: () => go('watchword'));
+    }
+
+    final lightIcons = dark || (screen == 'live' && live.level != 'CAUTION');
+    return MaterialApp(
+      title: 'Kavach',
+      debugShowCheckedModeBanner: false,
+      home: KavachTheme(
+        pal: pal,
+        scale: scale,
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: lightIcons
+              ? SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent)
+              : SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.transparent),
+          child: Scaffold(
+            backgroundColor: pal.bg,
+            body: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 220),
+              child: KeyedSubtree(key: ValueKey(screen), child: body),
             ),
-          ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
