@@ -1,6 +1,5 @@
 // theme.dart — palette (light/dark), risk colors, type. Ported from the Kavach design bundle.
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 Color hx(String h) {
   h = h.replaceAll('#', '');
@@ -8,11 +7,18 @@ Color hx(String h) {
   return Color(int.parse(h, radix: 16));
 }
 
-/// Hanken Grotesque text style helper.
+/// Hanken Grotesk text style helper. The family is bundled as an asset
+/// (see pubspec.yaml) so it renders offline — no runtime font fetch.
 TextStyle kfont(double size, FontWeight w, Color c,
         {double? height, double spacing = 0}) =>
-    GoogleFonts.getFont('Hanken Grotesque',
-        fontSize: size, fontWeight: w, color: c, height: height, letterSpacing: spacing);
+    TextStyle(
+      fontFamily: 'Hanken Grotesk',
+      fontSize: size,
+      fontWeight: w,
+      color: c,
+      height: height,
+      letterSpacing: spacing,
+    );
 
 /// Warm "paper" palette; risk colors fixed to kavach-core taxonomy.
 class Pal {

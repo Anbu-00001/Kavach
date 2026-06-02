@@ -35,11 +35,16 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
-  # Hanken Grotesque — the typeface from the Kavach design.
-  google_fonts: ^6.2.1
+  # On-device persistence for setup (safe-word, Guardian, armed state).
+  shared_preferences: ^2.3.2
+  onnxruntime: ^1.4.1
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+
+  # On-device end-to-end tests (the "drive the real app" suite).
+  integration_test:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -60,6 +65,13 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # On-device model: quantized classifier + WordPiece vocab + fusion taxonomy.
+  # Bundled so the whole detection pipeline runs offline (nothing leaves the phone).
+  assets:
+    - assets/model/intent.int8.onnx
+    - assets/model/vocab.txt
+    - assets/model/taxonomy.json
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -74,19 +86,11 @@ flutter:
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  # list giving the asset and other descriptors for the font.
   #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+  # Hanken Grotesk — bundled as an asset so it renders offline on-device
+  # (no runtime network fetch). Variable font covering all weights.
+  fonts:
+    - family: Hanken Grotesk
+      fonts:
+        - asset: assets/fonts/HankenGrotesk.ttf

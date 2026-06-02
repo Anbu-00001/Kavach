@@ -1,8 +1,10 @@
 // screens.dart — the six Kavach screens, ported from the design bundle.
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'data.dart';
 import 'widgets.dart';
+import 'engine/kavach_engine.dart';
 
 // ════════════ 1 · Onboarding ════════════
 class OnboardingScreen extends StatelessWidget {
@@ -207,8 +209,8 @@ class HomeScreen extends StatelessWidget {
   final bool armed;
   final String watchword;
   final String? guardian;
-  final VoidCallback onArm, onStop, onDemo, onProfile;
-  const HomeScreen({super.key, required this.armed, required this.watchword, required this.guardian, required this.onArm, required this.onStop, required this.onDemo, required this.onProfile});
+  final VoidCallback onArm, onStop, onDemo, onTry, onProfile;
+  const HomeScreen({super.key, required this.armed, required this.watchword, required this.guardian, required this.onArm, required this.onStop, required this.onDemo, required this.onTry, required this.onProfile});
   @override
   Widget build(BuildContext context) {
     final t = KavachTheme.of(context);
@@ -221,11 +223,12 @@ class HomeScreen extends StatelessWidget {
       footer: armed
           ? [
               KButton('See how it works', sub: 'Plays a sample scam call', icon: Icons.call, onTap: onDemo),
+              KButton('Try it yourself', sub: 'Type a message — real model, on this phone', kind: 'soft', icon: Icons.bolt, onTap: onTry),
               KButton('Stop Guardian Mode', kind: 'ghost', onTap: onStop),
             ]
           : [
               KButton('Start Guardian Mode', icon: Icons.shield_outlined, onTap: onArm),
-              Text('You can stop any time.', textAlign: TextAlign.center, style: kfont(14.5 * t.scale, FontWeight.w600, p.inkFaint)),
+              KButton('Try it yourself', kind: 'ghost', icon: Icons.bolt, onTap: onTry),
             ],
       body: Column(children: [
         const SizedBox(height: 30),
@@ -525,6 +528,203 @@ class _TranscriptStrip extends StatelessWidget {
   }
 }
 
+// ════════════ 7 · Analyze (live, real model) ════════════
+// Type/paste anything → the REAL on-device classifier + fusion run on this phone.
+// This is the honest proof the engine isn't scripted: judges can try their own text.
+class AnalyzeScreen extends StatefulWidget {
+  final bool engineReady;
+  final String? engineError;
+  final EngineResult? Function(String text) analyze;
+  final VoidCallback onBack;
+  const AnalyzeScreen({super.key, required this.engineReady, required this.engineError, required this.analyze, required this.onBack});
+  @override
+  State<AnalyzeScreen> createState() => _AnalyzeScreenState();
+}
+
+class _AnalyzeScreenState extends State<AnalyzeScreen> {
+  final c = TextEditingController();
+  EngineResult? result;
+  bool ran = false;
+
+  static const examples = [
+    'Your appointment is confirmed for Tuesday at 3pm.',
+    'Buy gift cards now and read me the numbers, hurry.',
+    "This is the tax office. Pay the fine immediately or you'll be arrested.",
+  ];
+
+  @override
+  void dispose() {
+    c.dispose();
+    super.dispose();
+  }
+
+  void _run() {
+    final text = c.text.trim();
+    if (text.isEmpty) return;
+    FocusScope.of(context).unfocus();
+    final r = widget.analyze(text);
+    // Debug-only diagnostic; never logs user text in a release build.
+    if (kDebugMode) {
+      debugPrint('KAVACH_ANALYZE: "${text.length > 40 ? '${text.substring(0, 40)}…' : text}" -> ${r?.level} ${r?.score.toStringAsFixed(2)} ${r?.tactics}');
+    }
+    setState(() {
+      result = r;
+      ran = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = KavachTheme.of(context);
+    final p = t.pal;
+    final ready = widget.engineReady;
+    return KScreen(
+      header: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        BackBtn(widget.onBack),
+        Text('Try it yourself', style: kfont(19 * t.scale, FontWeight.w800, p.ink)),
+        const SizedBox(width: 46),
+      ]),
+      footer: [
+        KButton(ready ? 'Analyze on this phone' : 'Loading model…', icon: ready ? Icons.bolt : null, disabled: !ready, onTap: _run),
+        Text('Runs entirely on this phone. No internet, nothing stored.', textAlign: TextAlign.center, style: kfont(13.5 * t.scale, FontWeight.w600, p.inkFaint)),
+      ],
+      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const SizedBox(height: 6),
+        Text('What did the caller say?', style: kfont(26 * t.scale, FontWeight.w800, p.ink, height: 1.15)),
+        const SizedBox(height: 10),
+        Text('Paste or type any message. The real model — the same one that runs on a live call — scores it right here, offline.',
+            style: kfont(16.5 * t.scale, FontWeight.w500, p.inkSoft, height: 1.4)),
+        const SizedBox(height: 18),
+        TextField(
+          controller: c,
+          maxLines: 4,
+          minLines: 3,
+          style: kfont(18 * t.scale, FontWeight.w600, p.ink, height: 1.35),
+          decoration: InputDecoration(
+            hintText: 'e.g. "Grandma it\'s me, I\'m in trouble — don\'t tell anyone…"',
+            hintStyle: kfont(16 * t.scale, FontWeight.w500, p.inkFaint, height: 1.35),
+            filled: true, fillColor: p.surface,
+            contentPadding: const EdgeInsets.all(18),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide(color: p.line, width: 2)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide(color: p.brand, width: 2)),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text('OR TRY ONE', style: kfont(12.5 * t.scale, FontWeight.w800, p.inkFaint, spacing: 0.6)),
+        const SizedBox(height: 8),
+        Wrap(spacing: 9, runSpacing: 9, children: [
+          for (final ex in examples)
+            GestureDetector(
+              onTap: () => setState(() => c.text = ex),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(color: p.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: p.line, width: 1.5)),
+                child: Text(ex.length > 34 ? '${ex.substring(0, 32)}…' : ex, style: kfont(14 * t.scale, FontWeight.w600, p.inkSoft)),
+              ),
+            ),
+        ]),
+        if (widget.engineError != null) ...[
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(color: p.highTint, borderRadius: BorderRadius.circular(14)),
+            child: Text('Model failed to load: ${widget.engineError}', style: kfont(14 * t.scale, FontWeight.w600, riskInk('HIGH', p.dark))),
+          ),
+        ],
+        if (ran && result != null) ...[
+          const SizedBox(height: 22),
+          _ResultCard(result: result!),
+        ],
+      ]),
+    );
+  }
+}
+
+class _ResultCard extends StatelessWidget {
+  final EngineResult result;
+  const _ResultCard({required this.result});
+  @override
+  Widget build(BuildContext context) {
+    final t = KavachTheme.of(context);
+    final p = t.pal;
+    final level = result.level;
+    final color = riskColor(level, p.dark);
+    // tactic probabilities, highest first, for transparent "why".
+    final order = const ['URGENCY', 'SECRECY', 'UNTRACEABLE_PAYMENT', 'AUTHORITY_IMPERSONATION', 'DISTRESS_HOOK', 'ISOLATION', 'IDENTITY_PROBE', 'RELATIONSHIP_SPOOF'];
+    final ranked = [for (var i = 0; i < order.length && i < result.probs.length; i++) (order[i], result.probs[i])]
+      ..sort((a, b) => b.$2.compareTo(a.$2));
+    return Container(
+      decoration: BoxDecoration(color: p.surface, borderRadius: BorderRadius.circular(22), border: Border.all(color: p.lineSoft, width: 1.5), boxShadow: p.shadow),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // verdict header band
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+          decoration: BoxDecoration(color: color, borderRadius: const BorderRadius.vertical(top: Radius.circular(22))),
+          child: Row(children: [
+            // .label reads as a verdict ("Looks normal" / "Be careful" / "Likely a scam");
+            // .banner is the live-shield wording ("Listening") and is wrong here.
+            Expanded(child: Text(kRisk[level]!.label, style: kfont(24 * t.scale, FontWeight.w800, bannerInk(level)))),
+            Text('${(result.score * 100).round()}%', style: kfont(24 * t.scale, FontWeight.w800, bannerInk(level))),
+          ]),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(18),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // why — pre-vetted explanations for fired tactics
+            if (result.tactics.isEmpty)
+              Text("Nothing in this message looks like a scam tactic.", style: kfont(17 * t.scale, FontWeight.w600, p.ink, height: 1.4))
+            else
+              for (final e in deriveExp(level, result.tactics))
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Padding(padding: const EdgeInsets.only(top: 7), child: Container(width: 9, height: 9, decoration: BoxDecoration(color: color, shape: BoxShape.circle))),
+                    const SizedBox(width: 11),
+                    Expanded(child: Text(e, style: kfont(16.5 * t.scale, FontWeight.w600, p.ink, height: 1.4))),
+                  ]),
+                ),
+            const SizedBox(height: 8),
+            Text('MODEL CONFIDENCE PER TACTIC', style: kfont(12 * t.scale, FontWeight.w800, p.inkFaint, spacing: 0.6)),
+            const SizedBox(height: 10),
+            for (final (id, prob) in ranked.take(4)) _ProbBar(label: kTactics[id]!.chip, prob: prob, color: color, p: p, scale: t.scale),
+            const SizedBox(height: 6),
+            Text('Real output from the on-device model — not a script.', style: kfont(12.5 * t.scale, FontWeight.w600, p.inkFaint)),
+          ]),
+        ),
+      ]),
+    );
+  }
+}
+
+class _ProbBar extends StatelessWidget {
+  final String label;
+  final double prob;
+  final Color color;
+  final Pal p;
+  final double scale;
+  const _ProbBar({required this.label, required this.prob, required this.color, required this.p, required this.scale});
+  @override
+  Widget build(BuildContext context) {
+    final fired = prob >= 0.5;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 9),
+      child: Row(children: [
+        SizedBox(width: 116, child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: kfont(14 * scale, FontWeight.w700, fired ? p.ink : p.inkSoft))),
+        const SizedBox(width: 8),
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(99),
+            child: LinearProgressIndicator(value: prob.clamp(0.0, 1.0), minHeight: 8, backgroundColor: p.surface2, color: fired ? color : p.inkFaint),
+          ),
+        ),
+        const SizedBox(width: 8),
+        SizedBox(width: 38, child: Text('${(prob * 100).round()}%', textAlign: TextAlign.right, style: kfont(13.5 * scale, FontWeight.w700, fired ? p.ink : p.inkFaint))),
+      ]),
+    );
+  }
+}
+
 // ════════════ 6 · Summary ════════════
 class SummaryScreen extends StatelessWidget {
   final String level, guardianStatus;
@@ -560,8 +760,8 @@ class SummaryScreen extends StatelessWidget {
             decoration: BoxDecoration(color: p.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: p.lineSoft, width: 1.5)),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Text('WHAT KAVACH NOTICED', style: kfont(13.5 * t.scale, FontWeight.w800, p.inkFaint, spacing: 0.6)),
-                const Spacer(),
+                Expanded(child: Text('WHAT KAVACH NOTICED', overflow: TextOverflow.ellipsis, style: kfont(13.5 * t.scale, FontWeight.w800, p.inkFaint, spacing: 0.6))),
+                const SizedBox(width: 10),
                 Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5), decoration: BoxDecoration(color: riskTint(level, p), borderRadius: BorderRadius.circular(99)), child: Text(kRisk[level]!.banner, style: kfont(13.5 * t.scale, FontWeight.w800, riskInk(level, p.dark)))),
               ]),
               const SizedBox(height: 13),

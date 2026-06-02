@@ -5,26 +5,68 @@ import 'package:flutter/services.dart';
 import 'theme.dart';
 import 'data.dart';
 import 'screens.dart';
+import 'store.dart';
+import 'engine/kavach_engine.dart';
 
-void main() => runApp(const KavachApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final store = await Store.load();
+  runApp(KavachApp(store: store));
+}
 
 class KavachApp extends StatefulWidget {
-  const KavachApp({super.key});
+  final Store store;
+  const KavachApp({super.key, required this.store});
   @override
   State<KavachApp> createState() => _KavachAppState();
 }
 
 class _KavachAppState extends State<KavachApp> {
-  String screen = 'onboarding';
-  bool dark = false;
+  late String screen;
+  late bool dark;
   double scale = 1.0;
   final Color accent = hx('#0E7C86');
-  String watchword = 'Marigold';
-  String? guardian = 'Priya';
-  bool armed = false;
+  late String watchword;
+  late String? guardian;
+  late bool armed;
   bool demoActive = false;
   bool minimal = false;
   Verdict live = buildVerdict('HIGH');
+
+  Store get _store => widget.store;
+
+  // Real on-device detection engine (ONNX + tokenizer + fusion). Loaded async;
+  // null until ready. The demo falls back to canned beats if it isn't loaded.
+  KavachEngine? engine;
+  String? engineError;
+  bool get engineReady => engine?.ready ?? false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Hydrate from disk: returning users skip onboarding and keep their setup.
+    watchword = _store.watchword;
+    guardian = _store.guardian;
+    armed = _store.armed;
+    dark = _store.dark;
+    screen = _store.onboarded ? 'home' : 'onboarding';
+    _loadEngine();
+  }
+
+  Future<void> _loadEngine() async {
+    final sw = Stopwatch()..start();
+    try {
+      final e = await KavachEngine.load();
+      debugPrint('KAVACH_ENGINE_READY in ${sw.elapsedMilliseconds}ms');
+      if (mounted) setState(() => engine = e);
+    } catch (err, st) {
+      debugPrint('KAVACH_ENGINE_LOAD_FAILED after ${sw.elapsedMilliseconds}ms: $err\n$st');
+      if (mounted) setState(() => engineError = '$err');
+    }
+  }
+
+  /// Run the real model on [text]; null if the engine isn't ready.
+  EngineResult? analyze(String text) => engineReady ? engine!.analyze(text) : null;
 
   String sumLevel = 'HIGH';
   List<String> sumTactics = kVerdicts['HIGH']!.tactics;
@@ -51,19 +93,41 @@ class _KavachAppState extends State<KavachApp> {
     _clear();
     demoActive = true;
     armed = true;
+    _store.armed = true;
     setState(() => screen = 'live');
     final acc = <Map<String, String>>[];
+    // Running peak: a call only ever escalates within itself (advisory behaviour),
+    // which also keeps the shield monotonic during the staged playback.
+    var peakScore = -1.0;
+    var peakLevel = 'SAFE';
+    var peakTactics = const <String>[];
     for (final beat in kDemoBeats) {
       _timers.add(Timer(Duration(milliseconds: beat.at), () {
         if (beat.who == 'them') acc.add({'who': beat.who, 'line': beat.line});
+        // REAL on-device inference on each caller line when the model is loaded;
+        // fall back to the scripted beat values otherwise (e.g. headless tests).
+        var level = beat.level;
+        var tactics = beat.tactics;
+        var score = beat.score;
+        if (engineReady && beat.who == 'them') {
+          final r = engine!.analyze(beat.line);
+          level = r.level;
+          tactics = r.tactics;
+          score = r.score;
+        }
+        if (score > peakScore) {
+          peakScore = score;
+          peakLevel = level;
+          peakTactics = tactics;
+        }
         setState(() {
           live = Verdict(
-            beat.level,
+            peakLevel,
             acc.where((l) => l['who'] == 'them').toList(),
-            beat.tactics,
-            deriveExp(beat.level, beat.tactics),
-            beat.guardian,
-            beat.score,
+            peakTactics,
+            deriveExp(peakLevel, peakTactics),
+            beat.guardian, // alert narration stays on the scripted timeline
+            peakScore,
             live: true,
           );
         });
@@ -86,6 +150,7 @@ class _KavachAppState extends State<KavachApp> {
     _clear();
     demoActive = false;
     armed = true;
+    _store.armed = true;
     setState(() => screen = 'home');
   }
 
@@ -101,13 +166,47 @@ class _KavachAppState extends State<KavachApp> {
     Widget body;
     switch (screen) {
       case 'watchword':
-        body = WatchwordScreen(watchword: watchword, onChanged: (v) => setState(() => watchword = v), onBack: () => go('onboarding'), onSave: () => go('guardian'));
+        body = WatchwordScreen(
+            watchword: watchword,
+            onChanged: (v) => setState(() {
+                  watchword = v;
+                  _store.watchword = v;
+                }),
+            onBack: () => go('onboarding'),
+            onSave: () => go('guardian'));
         break;
       case 'guardian':
-        body = GuardianScreen(guardian: guardian, onSelect: (v) => setState(() => guardian = v), onBack: () => go('watchword'), onFinish: () => go('home'));
+        body = GuardianScreen(
+            guardian: guardian,
+            onSelect: (v) => setState(() {
+                  guardian = v;
+                  _store.guardian = v;
+                }),
+            onBack: () => go('watchword'),
+            onFinish: () {
+              _store.onboarded = true;
+              go('home');
+            });
         break;
       case 'home':
-        body = HomeScreen(armed: armed, watchword: watchword, guardian: guardian, onArm: () => setState(() => armed = true), onStop: () => setState(() => armed = false), onDemo: startDemo, onProfile: () => go('onboarding'));
+        body = HomeScreen(
+            armed: armed,
+            watchword: watchword,
+            guardian: guardian,
+            onArm: () => setState(() {
+                  armed = true;
+                  _store.armed = true;
+                }),
+            onStop: () => setState(() {
+                  armed = false;
+                  _store.armed = false;
+                }),
+            onDemo: startDemo,
+            onTry: () => go('analyze'),
+            onProfile: () => go('onboarding'));
+        break;
+      case 'analyze':
+        body = AnalyzeScreen(engineReady: engineReady, engineError: engineError, analyze: analyze, onBack: () => go('home'));
         break;
       case 'live':
         body = LiveShieldScreen(v: live, watchword: watchword, guardianName: guardian, minimal: minimal, onHangup: onHangup, onSafe: onSafe);

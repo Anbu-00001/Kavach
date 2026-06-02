@@ -1,4 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- PRIVACY BY DESIGN: this release manifest declares NO permissions.
+         No android.permission.INTERNET → the app physically cannot send call
+         content (or anything) off the device. All detection runs locally on the
+         bundled ONNX model. (INTERNET appears only in the debug/profile manifests
+         for Flutter hot-reload during development; it is never in a release build.)
+         When live mic capture lands, the only addition will be RECORD_AUDIO +
+         FOREGROUND_SERVICE_MICROPHONE — still no network. -->
     <application
         android:label="kavach"
         android:name="${applicationName}"
