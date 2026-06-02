@@ -155,6 +155,86 @@ impl Default for Engine {
     }
 }
 
+// ───────────── FFI: multilingual SentencePiece tokenizer ─────────────
+// The Kotlin/Dart layer can't tokenize the XLM-R Unigram model (Precompiled
+// normalizer + Metaspace) on its own, so it calls into here. Dart reads the
+// bundled tokenizer.json asset and passes its bytes to `kavach_tok_new`, then
+// `kavach_tok_encode` returns the exact token ids the ONNX model expects.
+pub mod ffi {
+    use std::os::raw::c_void;
+    use std::slice;
+    use tokenizers::tokenizer::Tokenizer;
+    use tokenizers::utils::truncation::{TruncationParams, TruncationStrategy, TruncationDirection};
+
+    const MAX_LEN: usize = 64;
+
+    /// Build a tokenizer from raw tokenizer.json bytes. Returns an opaque handle
+    /// (or null on failure) that must be released with `kavach_tok_free`.
+    #[no_mangle]
+    pub extern "C" fn kavach_tok_new(json: *const u8, len: usize) -> *mut c_void {
+        if json.is_null() || len == 0 {
+            return std::ptr::null_mut();
+        }
+        let bytes = unsafe { slice::from_raw_parts(json, len) };
+        match Tokenizer::from_bytes(bytes) {
+            Ok(mut tk) => {
+                // No padding — return only real tokens (the model is fed one
+                // utterance at a time; Dart builds the all-ones attention mask).
+                tk.with_padding(None);
+                // Keep the special tokens (<s>…</s>) even when truncating.
+                let _ = tk.with_truncation(Some(TruncationParams {
+                    max_length: MAX_LEN,
+                    strategy: TruncationStrategy::LongestFirst,
+                    direction: TruncationDirection::Right,
+                    stride: 0,
+                }));
+                Box::into_raw(Box::new(tk)) as *mut c_void
+            }
+            Err(_) => std::ptr::null_mut(),
+        }
+    }
+
+    /// Encode UTF-8 `text` into up to `cap` ids written to `out_ids`.
+    /// Returns the number of ids written, or -1 on error.
+    #[no_mangle]
+    pub extern "C" fn kavach_tok_encode(
+        handle: *mut c_void,
+        text: *const u8,
+        text_len: usize,
+        out_ids: *mut i64,
+        cap: usize,
+    ) -> isize {
+        if handle.is_null() || text.is_null() || out_ids.is_null() {
+            return -1;
+        }
+        let tk = unsafe { &*(handle as *const Tokenizer) };
+        let bytes = unsafe { slice::from_raw_parts(text, text_len) };
+        let s = match std::str::from_utf8(bytes) {
+            Ok(s) => s,
+            Err(_) => return -1,
+        };
+        let enc = match tk.encode(s, true) {
+            Ok(e) => e,
+            Err(_) => return -1,
+        };
+        let ids = enc.get_ids();
+        let n = ids.len().min(cap);
+        let out = unsafe { slice::from_raw_parts_mut(out_ids, n) };
+        for i in 0..n {
+            out[i] = ids[i] as i64;
+        }
+        n as isize
+    }
+
+    /// Release a handle from `kavach_tok_new`.
+    #[no_mangle]
+    pub extern "C" fn kavach_tok_free(handle: *mut c_void) {
+        if !handle.is_null() {
+            unsafe { drop(Box::from_raw(handle as *mut Tokenizer)) };
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -206,5 +286,35 @@ mod tests {
         let base = e.assess(&probs(&e, &[("URGENCY", 0.9)]), 0.0).score;
         let boosted = e.assess(&probs(&e, &[("URGENCY", 0.9)]), 1.0).score;
         assert!(boosted > base);
+    }
+
+    // ── multilingual tokenizer FFI parity (vs Python HF tokenizer) ──
+    fn encode(tk: *mut std::os::raw::c_void, text: &str) -> Vec<i64> {
+        let mut buf = [0i64; 64];
+        let n = ffi::kavach_tok_encode(tk, text.as_ptr(), text.len(), buf.as_mut_ptr(), 64);
+        assert!(n >= 0, "encode failed for {text:?}");
+        buf[..n as usize].to_vec()
+    }
+
+    #[test]
+    fn multilingual_tokenizer_matches_python() {
+        let path = "../../../core/model/intent_ml/tokenizer.json";
+        let json = match std::fs::read(path) {
+            Ok(b) => b,
+            Err(_) => return, // tokenizer.json not present in this checkout — skip
+        };
+        let tk = ffi::kavach_tok_new(json.as_ptr(), json.len());
+        assert!(!tk.is_null(), "tokenizer failed to load");
+
+        // ids captured from transformers AutoTokenizer on the same tokenizer.json.
+        assert_eq!(encode(tk, "Buy gift cards now"), vec![0, 47184, 18466, 126381, 5036, 2]);
+        assert_eq!(encode(tk, "appointment confirmed"), vec![0, 164306, 39563, 297, 2]);
+        // Hindi: इंडिक script through the Precompiled normalizer must match too.
+        assert_eq!(
+            encode(tk, "अभी गिफ्ट कार्ड खरीदो"),
+            vec![0, 38159, 86561, 96310, 62359, 81096, 2284, 2]
+        );
+
+        ffi::kavach_tok_free(tk);
     }
 }

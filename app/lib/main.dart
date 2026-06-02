@@ -7,6 +7,7 @@ import 'data.dart';
 import 'screens.dart';
 import 'store.dart';
 import 'engine/kavach_engine.dart';
+import 'engine/live_listener.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +42,17 @@ class _KavachAppState extends State<KavachApp> {
   String? engineError;
   bool get engineReady => engine?.ready ?? false;
 
+  // Multilingual tier (118MB XLM-R + Rust SentencePiece). Loaded lazily on demand.
+  KavachEngine? mlEngine;
+  bool mlLoading = false;
+  String? mlError;
+  bool get mlReady => mlEngine?.ready ?? false;
+
+  // Live mic → Vosk → engine (Layer 1). Drives the live shield with real audio.
+  LiveListener? liveListener;
+  bool liveStarting = false;
+  String? liveError;
+
   @override
   void initState() {
     super.initState();
@@ -65,8 +77,88 @@ class _KavachAppState extends State<KavachApp> {
     }
   }
 
-  /// Run the real model on [text]; null if the engine isn't ready.
-  EngineResult? analyze(String text) => engineReady ? engine!.analyze(text) : null;
+  /// Lazy-load the multilingual tier the first time it's requested.
+  Future<void> _loadMultilingual() async {
+    if (mlEngine != null || mlLoading) return;
+    setState(() => mlLoading = true);
+    try {
+      final e = await KavachEngine.loadMultilingual();
+      if (mounted) setState(() => mlEngine = e);
+    } catch (err, st) {
+      debugPrint('KAVACH_ML_LOAD_FAILED: $err\n$st');
+      if (mounted) setState(() => mlError = '$err');
+    } finally {
+      if (mounted) setState(() => mlLoading = false);
+    }
+  }
+
+  /// Run the real model on [text] (English or multilingual tier); null if not ready.
+  EngineResult? analyzeWith(String text, bool multilingual) {
+    if (multilingual) return mlReady ? mlEngine!.analyze(text) : null;
+    return engineReady ? engine!.analyze(text) : null;
+  }
+
+  /// Start REAL live capture: mic → Vosk → engine → live shield.
+  Future<void> startLive() async {
+    if (!engineReady || liveStarting) return;
+    final ll = liveListener ??= LiveListener(engine!)
+      ..onUpdate = _onLiveUpdate
+      ..onError = (e) {
+        if (mounted) setState(() => liveError = e);
+      };
+    setState(() {
+      liveError = null;
+      liveStarting = true;
+    });
+    final granted = await ll.ensurePermission();
+    if (!granted) {
+      if (mounted) {
+        setState(() {
+          liveStarting = false;
+          liveError = 'Microphone permission is needed to listen to the call.';
+        });
+      }
+      return;
+    }
+    try {
+      armed = true;
+      _store.armed = true;
+      await ll.start(); // unzips + loads the Vosk model on first run
+      _onLiveUpdate();
+      if (mounted) {
+        setState(() {
+          liveStarting = false;
+          demoActive = false;
+          screen = 'live';
+        });
+      }
+    } catch (e, st) {
+      debugPrint('KAVACH_LIVE_START_FAILED: $e\n$st');
+      if (mounted) {
+        setState(() {
+          liveStarting = false;
+          liveError = '$e';
+        });
+      }
+    }
+  }
+
+  /// Rebuild the live shield from the listener's rolling-peak verdict + transcript.
+  void _onLiveUpdate() {
+    final ll = liveListener;
+    if (ll == null) return;
+    final r = ll.peak;
+    final lines = <Map<String, String>>[
+      for (final u in ll.transcript) {'who': 'them', 'line': u},
+      if (ll.partial != null && ll.partial!.isNotEmpty) {'who': 'them', 'line': ll.partial!},
+    ];
+    final level = r?.level ?? 'SAFE';
+    final tactics = r?.tactics ?? const <String>[];
+    final guardian = level == 'HIGH' ? 'sent' : 'idle';
+    if (mounted) {
+      setState(() => live = Verdict(level, lines, tactics, deriveExp(level, tactics), guardian, r?.score ?? 0.0, live: true));
+    }
+  }
 
   String sumLevel = 'HIGH';
   List<String> sumTactics = kVerdicts['HIGH']!.tactics;
@@ -137,6 +229,7 @@ class _KavachAppState extends State<KavachApp> {
 
   void onHangup() {
     _clear();
+    liveListener?.stop();
     demoActive = false;
     setState(() {
       sumLevel = live.level;
@@ -148,6 +241,7 @@ class _KavachAppState extends State<KavachApp> {
 
   void onSafe() {
     _clear();
+    liveListener?.stop();
     demoActive = false;
     armed = true;
     _store.armed = true;
@@ -157,6 +251,7 @@ class _KavachAppState extends State<KavachApp> {
   @override
   void dispose() {
     _clear();
+    liveListener?.stop();
     super.dispose();
   }
 
@@ -203,10 +298,22 @@ class _KavachAppState extends State<KavachApp> {
                 }),
             onDemo: startDemo,
             onTry: () => go('analyze'),
+            onLive: startLive,
+            liveStarting: liveStarting,
+            liveError: liveError,
             onProfile: () => go('onboarding'));
         break;
       case 'analyze':
-        body = AnalyzeScreen(engineReady: engineReady, engineError: engineError, analyze: analyze, onBack: () => go('home'));
+        body = AnalyzeScreen(
+          engineReady: engineReady,
+          engineError: engineError,
+          mlReady: mlReady,
+          mlLoading: mlLoading,
+          mlError: mlError,
+          loadMultilingual: _loadMultilingual,
+          analyze: analyzeWith,
+          onBack: () => go('home'),
+        );
         break;
       case 'live':
         body = LiveShieldScreen(v: live, watchword: watchword, guardianName: guardian, minimal: minimal, onHangup: onHangup, onSafe: onSafe);

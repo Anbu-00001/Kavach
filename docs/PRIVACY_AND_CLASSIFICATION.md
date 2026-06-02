@@ -122,11 +122,25 @@ not hide this; we design around it:
   appointment is confirmed" → 0.00); blatant scams correctly hit **HIGH** (e.g.
   "buy gift cards now" → 0.85). Verified live on the device.
 
-### e. Transparency — the verdict is not a black box
+### e. Multilingual — scams aren't only in English
+Voice-scam fraud in India is overwhelmingly in Hindi, Tamil, Telugu, etc. Kavach
+ships **two tiers**, both fully on-device:
+- **English** — a 22MB MiniLM with a pure-Dart WordPiece tokenizer (fast, always on).
+- **Multilingual (12 languages)** — a 118MB XLM-R model. Its SentencePiece
+  (Unigram + Precompiled normalizer) tokenizer can't be reproduced in Dart, so the
+  bundled **Rust `kavach_core` library tokenizes it over FFI** — the HF `tokenizers`
+  crate, identical to the training pipeline, verified against Python in host tests.
+
+Verified live on the phone: *"अभी गिफ्ट कार्ड खरीदो… किसी को मत बताना"* → **HIGH**
+(UNTRACEABLE_PAYMENT + SECRECY), while *"आपकी डिलीवरी कल आ जाएगी"* → **SAFE**. The
+tactics are language-independent — coercion looks the same in any language.
+
+### f. Transparency — the verdict is not a black box
 The **"Try it yourself"** screen shows the model's **actual per-tactic confidence**
-for any text you type, on the phone, offline. The verdict is auditable and
-reproducible — never a canned script. The on-device integration test
-(`integration_test/engine_test.dart`) asserts these real outputs.
+for any text you type (English or any of the 12 languages), on the phone, offline.
+The verdict is auditable and reproducible — never a canned script. The on-device
+integration tests (`integration_test/engine_test.dart`, `ml_test.dart`) assert these
+real outputs.
 
 ---
 

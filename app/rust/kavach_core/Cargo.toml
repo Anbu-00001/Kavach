@@ -10,3 +10,8 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+# HF tokenizers: loads tokenizer.json (Unigram + Precompiled normalizer + Metaspace)
+# and tokenizes IDENTICALLY to Python — the only sane way to do multilingual
+# SentencePiece on-device. The "unstable_wasm" feature set is pure-Rust (fancy-regex,
+# no oniguruma C dep, no rayon), so it cross-compiles cleanly + small to Android.
+tokenizers = { version = "0.21", default-features = false, features = ["unstable_wasm"] }

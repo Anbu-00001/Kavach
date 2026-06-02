@@ -209,8 +209,10 @@ class HomeScreen extends StatelessWidget {
   final bool armed;
   final String watchword;
   final String? guardian;
-  final VoidCallback onArm, onStop, onDemo, onTry, onProfile;
-  const HomeScreen({super.key, required this.armed, required this.watchword, required this.guardian, required this.onArm, required this.onStop, required this.onDemo, required this.onTry, required this.onProfile});
+  final bool liveStarting;
+  final String? liveError;
+  final VoidCallback onArm, onStop, onDemo, onTry, onLive, onProfile;
+  const HomeScreen({super.key, required this.armed, required this.watchword, required this.guardian, required this.liveStarting, required this.liveError, required this.onArm, required this.onStop, required this.onDemo, required this.onTry, required this.onLive, required this.onProfile});
   @override
   Widget build(BuildContext context) {
     final t = KavachTheme.of(context);
@@ -222,9 +224,9 @@ class HomeScreen extends StatelessWidget {
       ]),
       footer: armed
           ? [
-              KButton('See how it works', sub: 'Plays a sample scam call', icon: Icons.call, onTap: onDemo),
-              KButton('Try it yourself', sub: 'Type a message — real model, on this phone', kind: 'soft', icon: Icons.bolt, onTap: onTry),
-              KButton('Stop Guardian Mode', kind: 'ghost', onTap: onStop),
+              KButton(liveStarting ? 'Starting…' : 'Go live', sub: 'Listen to a real call on speaker', icon: liveStarting ? null : Icons.mic_none, disabled: liveStarting, onTap: onLive),
+              KButton('See how it works', sub: 'Plays a sample scam call', kind: 'soft', icon: Icons.call, onTap: onDemo),
+              KButton('Try it yourself', kind: 'ghost', icon: Icons.bolt, onTap: onTry),
             ]
           : [
               KButton('Start Guardian Mode', icon: Icons.shield_outlined, onTap: onArm),
@@ -250,6 +252,21 @@ class HomeScreen extends StatelessWidget {
         _ReadyRow(icon: Icons.key_outlined, label: 'Family safe-word', value: watchword.isEmpty ? 'Not set' : watchword),
         const SizedBox(height: 10),
         _ReadyRow(icon: Icons.notifications_none, label: 'Guardian', value: guardian ?? 'Not set'),
+        if (liveError != null) ...[
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(color: p.highTint, borderRadius: BorderRadius.circular(14)),
+            child: Text(liveError!, style: kfont(14 * t.scale, FontWeight.w600, riskInk('HIGH', p.dark))),
+          ),
+        ],
+        if (armed) ...[
+          const SizedBox(height: 18),
+          GestureDetector(
+            onTap: onStop,
+            child: Text('Stop Guardian Mode', textAlign: TextAlign.center, style: kfont(15.5 * t.scale, FontWeight.w700, p.inkFaint)),
+          ),
+        ],
       ]),
     );
   }
@@ -534,9 +551,22 @@ class _TranscriptStrip extends StatelessWidget {
 class AnalyzeScreen extends StatefulWidget {
   final bool engineReady;
   final String? engineError;
-  final EngineResult? Function(String text) analyze;
+  final bool mlReady, mlLoading;
+  final String? mlError;
+  final Future<void> Function() loadMultilingual;
+  final EngineResult? Function(String text, bool multilingual) analyze;
   final VoidCallback onBack;
-  const AnalyzeScreen({super.key, required this.engineReady, required this.engineError, required this.analyze, required this.onBack});
+  const AnalyzeScreen({
+    super.key,
+    required this.engineReady,
+    required this.engineError,
+    required this.mlReady,
+    required this.mlLoading,
+    required this.mlError,
+    required this.loadMultilingual,
+    required this.analyze,
+    required this.onBack,
+  });
   @override
   State<AnalyzeScreen> createState() => _AnalyzeScreenState();
 }
@@ -545,11 +575,18 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
   final c = TextEditingController();
   EngineResult? result;
   bool ran = false;
+  bool ml = false; // selected tier: false = English, true = multilingual
 
-  static const examples = [
+  static const examplesEn = [
     'Your appointment is confirmed for Tuesday at 3pm.',
     'Buy gift cards now and read me the numbers, hurry.',
     "This is the tax office. Pay the fine immediately or you'll be arrested.",
+  ];
+  // Hindi + Tamil scams (Devanagari/Tamil go through the Rust SentencePiece lib).
+  static const examplesMl = [
+    'अभी गिफ्ट कार्ड खरीदो और नंबर बताओ, किसी को मत बताना',
+    'இப்போது கிஃப்ட் கார்டு வாங்கி எண்களை சொல்லுங்கள்',
+    'आपकी डिलीवरी कल सुबह आ जाएगी, धन्यवाद',
   ];
 
   @override
@@ -558,14 +595,23 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
     super.dispose();
   }
 
+  void _selectTier(bool multilingual) {
+    setState(() {
+      ml = multilingual;
+      result = null;
+      ran = false;
+    });
+    if (multilingual) widget.loadMultilingual();
+  }
+
   void _run() {
     final text = c.text.trim();
     if (text.isEmpty) return;
     FocusScope.of(context).unfocus();
-    final r = widget.analyze(text);
+    final r = widget.analyze(text, ml);
     // Debug-only diagnostic; never logs user text in a release build.
     if (kDebugMode) {
-      debugPrint('KAVACH_ANALYZE: "${text.length > 40 ? '${text.substring(0, 40)}…' : text}" -> ${r?.level} ${r?.score.toStringAsFixed(2)} ${r?.tactics}');
+      debugPrint('KAVACH_ANALYZE[${ml ? "ml" : "en"}]: "${text.length > 40 ? '${text.substring(0, 40)}…' : text}" -> ${r?.level} ${r?.score.toStringAsFixed(2)} ${r?.tactics}');
     }
     setState(() {
       result = r;
@@ -577,7 +623,10 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
   Widget build(BuildContext context) {
     final t = KavachTheme.of(context);
     final p = t.pal;
-    final ready = widget.engineReady;
+    final ready = ml ? widget.mlReady : widget.engineReady;
+    final loading = ml && widget.mlLoading;
+    final label = loading ? 'Loading languages…' : (ready ? 'Analyze on this phone' : 'Loading model…');
+    final examples = ml ? examplesMl : examplesEn;
     return KScreen(
       header: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         BackBtn(widget.onBack),
@@ -585,7 +634,7 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
         const SizedBox(width: 46),
       ]),
       footer: [
-        KButton(ready ? 'Analyze on this phone' : 'Loading model…', icon: ready ? Icons.bolt : null, disabled: !ready, onTap: _run),
+        KButton(label, icon: (ready && !loading) ? Icons.bolt : null, disabled: !ready, onTap: _run),
         Text('Runs entirely on this phone. No internet, nothing stored.', textAlign: TextAlign.center, style: kfont(13.5 * t.scale, FontWeight.w600, p.inkFaint)),
       ],
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -594,7 +643,9 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
         const SizedBox(height: 10),
         Text('Paste or type any message. The real model — the same one that runs on a live call — scores it right here, offline.',
             style: kfont(16.5 * t.scale, FontWeight.w500, p.inkSoft, height: 1.4)),
-        const SizedBox(height: 18),
+        const SizedBox(height: 14),
+        _TierToggle(ml: ml, mlLoading: widget.mlLoading, onSelect: _selectTier),
+        const SizedBox(height: 16),
         TextField(
           controller: c,
           maxLines: 4,
@@ -623,18 +674,58 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
               ),
             ),
         ]),
-        if (widget.engineError != null) ...[
+        if ((ml ? widget.mlError : widget.engineError) != null) ...[
           const SizedBox(height: 18),
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(color: p.highTint, borderRadius: BorderRadius.circular(14)),
-            child: Text('Model failed to load: ${widget.engineError}', style: kfont(14 * t.scale, FontWeight.w600, riskInk('HIGH', p.dark))),
+            child: Text('Model failed to load: ${ml ? widget.mlError : widget.engineError}', style: kfont(14 * t.scale, FontWeight.w600, riskInk('HIGH', p.dark))),
           ),
         ],
         if (ran && result != null) ...[
           const SizedBox(height: 22),
           _ResultCard(result: result!),
         ],
+      ]),
+    );
+  }
+}
+
+// Segmented English / multilingual tier selector.
+class _TierToggle extends StatelessWidget {
+  final bool ml, mlLoading;
+  final ValueChanged<bool> onSelect;
+  const _TierToggle({required this.ml, required this.mlLoading, required this.onSelect});
+  @override
+  Widget build(BuildContext context) {
+    final t = KavachTheme.of(context);
+    final p = t.pal;
+    Widget seg(String label, bool selected, VoidCallback onTap, {Widget? trailing}) => Expanded(
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(color: selected ? p.brand : Colors.transparent, borderRadius: BorderRadius.circular(13)),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(label, style: kfont(15.5 * t.scale, FontWeight.w800, selected ? p.onColor : p.inkSoft)),
+                if (trailing != null) ...[const SizedBox(width: 8), trailing],
+              ]),
+            ),
+          ),
+        );
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(color: p.surface2, borderRadius: BorderRadius.circular(16)),
+      child: Row(children: [
+        seg('English', !ml, () => onSelect(false)),
+        seg(
+          '12 languages',
+          ml,
+          () => onSelect(true),
+          trailing: mlLoading
+              ? SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: ml ? p.onColor : p.inkSoft))
+              : null,
+        ),
       ]),
     );
   }

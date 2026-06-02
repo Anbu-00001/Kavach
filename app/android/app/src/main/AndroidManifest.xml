@@ -1,11 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- PRIVACY BY DESIGN: this release manifest declares NO permissions.
-         No android.permission.INTERNET → the app physically cannot send call
-         content (or anything) off the device. All detection runs locally on the
-         bundled ONNX model. (INTERNET appears only in the debug/profile manifests
-         for Flutter hot-reload during development; it is never in a release build.)
-         When live mic capture lands, the only addition will be RECORD_AUDIO +
-         FOREGROUND_SERVICE_MICROPHONE — still no network. -->
+    <!-- PRIVACY BY DESIGN: the ONLY permissions are for capturing call audio on
+         THIS device and running the mic foreground service. Critically, there is
+         NO android.permission.INTERNET → the app physically cannot send call
+         content (or anything) off the device. All ASR (Vosk) and detection (ONNX)
+         run locally on bundled models. (INTERNET appears only in the debug/profile
+         manifests for Flutter hot-reload; never in a release build.) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="kavach"
         android:name="${applicationName}"

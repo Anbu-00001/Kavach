@@ -38,6 +38,16 @@ dependencies:
   # On-device persistence for setup (safe-word, Guardian, armed state).
   shared_preferences: ^2.3.2
   onnxruntime: ^1.4.1
+  ffi: ^2.2.0
+  vosk_flutter: ^0.3.48
+  flutter_background_service: ^5.1.0
+  permission_handler: ^12.0.0
+
+# vosk_flutter 0.3.48 pins permission_handler ^10.2.0, whose Android impl uses the
+# removed v1 embedding and won't compile. Force a modern version — vosk only uses
+# the stable Permission.microphone API, so this is safe.
+dependency_overrides:
+  permission_handler: ^12.0.0
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +81,15 @@ flutter:
     - assets/model/intent.int8.onnx
     - assets/model/vocab.txt
     - assets/model/taxonomy.json
+    # Multilingual tier (12 languages incl. Hindi/Tamil): bigger model + the
+    # SentencePiece tokenizer.json, tokenized by the bundled Rust lib over FFI.
+    - assets/model/intent_ml.int8.onnx
+    - assets/model/intent_ml.tokenizer.json
+    # Offline streaming ASR model (Vosk small English) for live call capture.
+    - assets/models/vosk-model-small-en-us-0.15.zip
+    # Synthesized speech clips (16kHz) for the on-device ASR→engine test.
+    - assets/test/scam_en.wav
+    - assets/test/legit_en.wav
 
   # To add assets to your application, add an assets section, like this:
   # assets:
