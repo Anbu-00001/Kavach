@@ -42,6 +42,7 @@ dependencies:
   vosk_flutter: ^0.3.48
   flutter_background_service: ^5.1.0
   permission_handler: ^12.0.0
+  flutter_background_service_android: ^6.3.1
 
 # vosk_flutter 0.3.48 pins permission_handler ^10.2.0, whose Android impl uses the
 # removed v1 embedding and won't compile. Force a modern version — vosk only uses

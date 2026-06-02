@@ -1,16 +1,21 @@
 // main.dart — Kavach app: state, navigation, and the live demo timeline.
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'theme.dart';
 import 'data.dart';
 import 'screens.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'store.dart';
 import 'engine/kavach_engine.dart';
 import 'engine/live_listener.dart';
+import 'engine/guardian_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await configureGuardian(); // set up the background guardian service (not started)
   final store = await Store.load();
   runApp(KavachApp(store: store));
 }
@@ -52,6 +57,10 @@ class _KavachAppState extends State<KavachApp> {
   LiveListener? liveListener;
   bool liveStarting = false;
   String? liveError;
+
+  // Background guardian (Layer 2): foreground service streaming verdicts to the UI.
+  bool guarding = false;
+  StreamSubscription<Map<String, dynamic>?>? _guardSub;
 
   @override
   void initState() {
@@ -143,6 +152,55 @@ class _KavachAppState extends State<KavachApp> {
     }
   }
 
+  /// Start the always-on background guardian (foreground service).
+  Future<void> startGuard() async {
+    final mic = await Permission.microphone.request();
+    if (!mic.isGranted) {
+      if (mounted) setState(() => liveError = 'Microphone permission is needed to guard your calls.');
+      return;
+    }
+    // Android 13+/OEM ROMs REQUIRE a postable notification for a foreground
+    // service — without POST_NOTIFICATIONS the service crashes on startForeground.
+    final notif = await Permission.notification.request();
+    if (!notif.isGranted) {
+      if (mounted) setState(() => liveError = 'Please allow notifications — the always-on guard needs a visible notice to keep running.');
+      return;
+    }
+    final svc = FlutterBackgroundService();
+    _guardSub ??= svc.on('verdict').listen(_onGuardVerdict);
+    await svc.startService();
+    armed = true;
+    _store.armed = true;
+    if (mounted) {
+      setState(() {
+        liveError = null;
+        guarding = true;
+        demoActive = false;
+        live = Verdict('SAFE', const [], const [], deriveExp('SAFE', const []), 'idle', 0.0, live: true);
+        screen = 'live';
+      });
+    }
+  }
+
+  void stopGuard() {
+    FlutterBackgroundService().invoke('stop');
+    _guardSub?.cancel();
+    _guardSub = null;
+    if (mounted) setState(() => guarding = false);
+  }
+
+  /// Update the live shield from a verdict pushed by the background isolate.
+  void _onGuardVerdict(Map<String, dynamic>? data) {
+    if (data == null || !mounted) return;
+    final level = data['level'] as String? ?? 'SAFE';
+    final score = (data['score'] as num?)?.toDouble() ?? 0.0;
+    final tactics = (data['tactics'] as List?)?.cast<String>() ?? const <String>[];
+    final tr = (data['transcript'] as List?)?.cast<String>() ?? const <String>[];
+    final lines = [for (final u in tr) {'who': 'them', 'line': u}];
+    if (kDebugMode) debugPrint('KAVACH_UI guard verdict: $level ${score.toStringAsFixed(2)} beat=${data['beat']}');
+    setState(() => live = Verdict(level, lines, tactics, deriveExp(level, tactics), level == 'HIGH' ? 'sent' : 'idle', score, live: true));
+  }
+
   /// Rebuild the live shield from the listener's rolling-peak verdict + transcript.
   void _onLiveUpdate() {
     final ll = liveListener;
@@ -230,6 +288,7 @@ class _KavachAppState extends State<KavachApp> {
   void onHangup() {
     _clear();
     liveListener?.stop();
+    if (guarding) stopGuard();
     demoActive = false;
     setState(() {
       sumLevel = live.level;
@@ -242,6 +301,7 @@ class _KavachAppState extends State<KavachApp> {
   void onSafe() {
     _clear();
     liveListener?.stop();
+    if (guarding) stopGuard();
     demoActive = false;
     armed = true;
     _store.armed = true;
@@ -252,6 +312,7 @@ class _KavachAppState extends State<KavachApp> {
   void dispose() {
     _clear();
     liveListener?.stop();
+    _guardSub?.cancel();
     super.dispose();
   }
 
@@ -299,6 +360,8 @@ class _KavachAppState extends State<KavachApp> {
             onDemo: startDemo,
             onTry: () => go('analyze'),
             onLive: startLive,
+            onGuard: startGuard,
+            guarding: guarding,
             liveStarting: liveStarting,
             liveError: liveError,
             onProfile: () => go('onboarding'));

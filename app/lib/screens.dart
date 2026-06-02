@@ -210,9 +210,10 @@ class HomeScreen extends StatelessWidget {
   final String watchword;
   final String? guardian;
   final bool liveStarting;
+  final bool guarding;
   final String? liveError;
-  final VoidCallback onArm, onStop, onDemo, onTry, onLive, onProfile;
-  const HomeScreen({super.key, required this.armed, required this.watchword, required this.guardian, required this.liveStarting, required this.liveError, required this.onArm, required this.onStop, required this.onDemo, required this.onTry, required this.onLive, required this.onProfile});
+  final VoidCallback onArm, onStop, onDemo, onTry, onLive, onGuard, onProfile;
+  const HomeScreen({super.key, required this.armed, required this.watchword, required this.guardian, required this.liveStarting, required this.guarding, required this.liveError, required this.onArm, required this.onStop, required this.onDemo, required this.onTry, required this.onLive, required this.onGuard, required this.onProfile});
   @override
   Widget build(BuildContext context) {
     final t = KavachTheme.of(context);
@@ -224,8 +225,9 @@ class HomeScreen extends StatelessWidget {
       ]),
       footer: armed
           ? [
-              KButton(liveStarting ? 'Starting…' : 'Go live', sub: 'Listen to a real call on speaker', icon: liveStarting ? null : Icons.mic_none, disabled: liveStarting, onTap: onLive),
-              KButton('See how it works', sub: 'Plays a sample scam call', kind: 'soft', icon: Icons.call, onTap: onDemo),
+              KButton('Guard in background', sub: 'Keeps watching with the screen off', icon: Icons.security, onTap: onGuard),
+              KButton(liveStarting ? 'Starting…' : 'Go live now', sub: 'Listen to a call on speaker', kind: 'soft', icon: liveStarting ? null : Icons.mic_none, disabled: liveStarting, onTap: onLive),
+              KButton('See how it works', kind: 'ghost', icon: Icons.call, onTap: onDemo),
               KButton('Try it yourself', kind: 'ghost', icon: Icons.bolt, onTap: onTry),
             ]
           : [

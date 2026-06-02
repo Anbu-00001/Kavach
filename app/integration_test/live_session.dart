@@ -28,7 +28,7 @@ void main() {
     await tester.pumpWidget(KavachApp(store: store));
 
     await tester.pump(const Duration(seconds: 8)); // let the English engine load
-    await tester.tap(find.text('Go live'));
+    await tester.tap(find.text('Go live now'));
     await tester.pump();
     await waitFor(tester, find.text('LIVE · ON CALL'));
     debugPrint('KAVACH_LIVE_SESSION_OPEN: speak now');
