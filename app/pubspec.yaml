@@ -43,6 +43,10 @@ dependencies:
   flutter_background_service: ^5.1.0
   permission_handler: ^12.0.0
   flutter_background_service_android: ^6.3.1
+  # Needed to CREATE the guardian notification channel up-front. Without an
+  # existing channel, startForeground() posts a "Bad notification" and Android
+  # 14 kills the process (CannotPostForegroundServiceNotificationException).
+  flutter_local_notifications: ^17.2.3
 
 # vosk_flutter 0.3.48 pins permission_handler ^10.2.0, whose Android impl uses the
 # removed v1 embedding and won't compile. Force a modern version — vosk only uses
@@ -86,8 +90,10 @@ flutter:
     # SentencePiece tokenizer.json, tokenized by the bundled Rust lib over FFI.
     - assets/model/intent_ml.int8.onnx
     - assets/model/intent_ml.tokenizer.json
-    # Offline streaming ASR model (Vosk small English) for live call capture.
+    # Offline streaming ASR models (Vosk small) for live call capture. English +
+    # Hindi bundled; Telugu/Gujarati slot in identically (same code path).
     - assets/models/vosk-model-small-en-us-0.15.zip
+    - assets/models/vosk-model-small-hi-0.22.zip
     # Synthesized speech clips (16kHz) for the on-device ASR→engine test.
     - assets/test/scam_en.wav
     - assets/test/legit_en.wav

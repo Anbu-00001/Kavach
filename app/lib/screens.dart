@@ -5,6 +5,7 @@ import 'theme.dart';
 import 'data.dart';
 import 'widgets.dart';
 import 'engine/kavach_engine.dart';
+import 'native/call_guard.dart';
 
 // ════════════ 1 · Onboarding ════════════
 class OnboardingScreen extends StatelessWidget {
@@ -212,8 +213,10 @@ class HomeScreen extends StatelessWidget {
   final bool liveStarting;
   final bool guarding;
   final String? liveError;
-  final VoidCallback onArm, onStop, onDemo, onTry, onLive, onGuard, onProfile;
-  const HomeScreen({super.key, required this.armed, required this.watchword, required this.guardian, required this.liveStarting, required this.guarding, required this.liveError, required this.onArm, required this.onStop, required this.onDemo, required this.onTry, required this.onLive, required this.onGuard, required this.onProfile});
+  final VoidCallback onArm, onStop, onDemo, onTry, onLive, onGuard, onProfile, onCallShield;
+  final String liveLang;
+  final ValueChanged<String> onLiveLang;
+  const HomeScreen({super.key, required this.armed, required this.watchword, required this.guardian, required this.liveStarting, required this.guarding, required this.liveError, required this.onArm, required this.onStop, required this.onDemo, required this.onTry, required this.onLive, required this.onGuard, required this.onProfile, required this.onCallShield, required this.liveLang, required this.onLiveLang});
   @override
   Widget build(BuildContext context) {
     final t = KavachTheme.of(context);
@@ -227,11 +230,11 @@ class HomeScreen extends StatelessWidget {
           ? [
               KButton('Guard in background', sub: 'Keeps watching with the screen off', icon: Icons.security, onTap: onGuard),
               KButton(liveStarting ? 'Starting…' : 'Go live now', sub: 'Listen to a call on speaker', kind: 'soft', icon: liveStarting ? null : Icons.mic_none, disabled: liveStarting, onTap: onLive),
-              KButton('See how it works', kind: 'ghost', icon: Icons.call, onTap: onDemo),
-              KButton('Try it yourself', kind: 'ghost', icon: Icons.bolt, onTap: onTry),
+              KButton('Shield unknown callers', sub: 'Auto-warn when a stranger calls', kind: 'soft', icon: Icons.ring_volume_outlined, onTap: onCallShield),
             ]
           : [
               KButton('Start Guardian Mode', icon: Icons.shield_outlined, onTap: onArm),
+              KButton('Shield unknown callers', kind: 'ghost', icon: Icons.ring_volume_outlined, onTap: onCallShield),
               KButton('Try it yourself', kind: 'ghost', icon: Icons.bolt, onTap: onTry),
             ],
       body: Column(children: [
@@ -250,7 +253,11 @@ class HomeScreen extends StatelessWidget {
           armed ? "I'm listening for scams in the background. Carry on as normal." : "Turn on Guardian Mode and I'll watch your calls for scams.",
           textAlign: TextAlign.center, style: kfont(19 * t.scale, FontWeight.w500, p.inkSoft, height: 1.4),
         ),
-        const SizedBox(height: 26),
+        const SizedBox(height: 22),
+        if (armed) ...[
+          _LiveLangPicker(lang: liveLang, onPick: onLiveLang),
+          const SizedBox(height: 16),
+        ],
         _ReadyRow(icon: Icons.key_outlined, label: 'Family safe-word', value: watchword.isEmpty ? 'Not set' : watchword),
         const SizedBox(height: 10),
         _ReadyRow(icon: Icons.notifications_none, label: 'Guardian', value: guardian ?? 'Not set'),
@@ -263,7 +270,10 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
         if (armed) ...[
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
+          KButton('See how it works', kind: 'ghost', icon: Icons.call, onTap: onDemo),
+          KButton('Try it yourself', kind: 'ghost', icon: Icons.bolt, onTap: onTry),
+          const SizedBox(height: 12),
           GestureDetector(
             onTap: onStop,
             child: Text('Stop Guardian Mode', textAlign: TextAlign.center, style: kfont(15.5 * t.scale, FontWeight.w700, p.inkFaint)),
@@ -271,6 +281,38 @@ class HomeScreen extends StatelessWidget {
         ],
       ]),
     );
+  }
+}
+
+// Live-voice language picker — English uses the MiniLM tier; हिंदी (and other
+// bundled languages) use the multilingual XLM-R tier with a matching Vosk model.
+class _LiveLangPicker extends StatelessWidget {
+  final String lang;
+  final ValueChanged<String> onPick;
+  const _LiveLangPicker({required this.lang, required this.onPick});
+  static const _langs = [('en', 'English'), ('hi', 'हिंदी')];
+  @override
+  Widget build(BuildContext context) {
+    final t = KavachTheme.of(context);
+    final p = t.pal;
+    return Row(children: [
+      Icon(Icons.translate, size: 18, color: p.inkFaint),
+      const SizedBox(width: 8),
+      Text('Live voice', style: kfont(14 * t.scale, FontWeight.w700, p.inkSoft)),
+      const Spacer(),
+      for (final (code, label) in _langs)
+        Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: GestureDetector(
+            onTap: () => onPick(code),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(color: lang == code ? p.brand : p.surface2, borderRadius: BorderRadius.circular(99)),
+              child: Text(label, style: kfont(14 * t.scale, FontWeight.w700, lang == code ? p.onColor : p.inkSoft)),
+            ),
+          ),
+        ),
+    ]);
   }
 }
 
@@ -777,7 +819,33 @@ class _ResultCard extends StatelessWidget {
                     Expanded(child: Text(e, style: kfont(16.5 * t.scale, FontWeight.w600, p.ink, height: 1.4))),
                   ]),
                 ),
-            const SizedBox(height: 8),
+            // evidence — the exact words the MODEL keyed on (occlusion attribution).
+            // This is what makes the verdict feel real: it quotes what was said.
+            if (result.evidence.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(color: p.surface2, borderRadius: BorderRadius.circular(14)),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('WHAT TRIGGERED THIS', style: kfont(11.5 * t.scale, FontWeight.w800, p.inkFaint, spacing: 0.5)),
+                  const SizedBox(height: 9),
+                  for (final id in result.tactics)
+                    if (result.evidence[id] != null && result.evidence[id]!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(kTactics[id]!.chip, style: kfont(13 * t.scale, FontWeight.w800, color)),
+                          const SizedBox(height: 2),
+                          Text('“${result.evidence[id]!.join('”  ·  “')}”', style: kfont(15.5 * t.scale, FontWeight.w600, p.ink, height: 1.3)),
+                        ]),
+                      ),
+                  Text('Found by removing each word and watching the model’s score move — its real reasoning, on-device.',
+                      style: kfont(11.5 * t.scale, FontWeight.w600, p.inkFaint, height: 1.3)),
+                ]),
+              ),
+            ],
+            const SizedBox(height: 14),
             Text('MODEL CONFIDENCE PER TACTIC', style: kfont(12 * t.scale, FontWeight.w800, p.inkFaint, spacing: 0.6)),
             const SizedBox(height: 10),
             for (final (id, prob) in ranked.take(4)) _ProbBar(label: kTactics[id]!.chip, prob: prob, color: color, p: p, scale: t.scale),
@@ -814,6 +882,138 @@ class _ProbBar extends StatelessWidget {
         const SizedBox(width: 8),
         SizedBox(width: 38, child: Text('${(prob * 100).round()}%', textAlign: TextAlign.right, style: kfont(13.5 * scale, FontWeight.w700, fired ? p.ink : p.inkFaint))),
       ]),
+    );
+  }
+}
+
+// ════════════ Layer 0 · Unknown-call shield setup ════════════
+class CallShieldScreen extends StatefulWidget {
+  final VoidCallback onBack;
+  const CallShieldScreen({super.key, required this.onBack});
+  @override
+  State<CallShieldScreen> createState() => _CallShieldScreenState();
+}
+
+class _CallShieldScreenState extends State<CallShieldScreen> with WidgetsBindingObserver {
+  bool role = false, overlay = false, auto = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _refresh();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // Re-check permissions when the user returns from a system settings screen.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState s) {
+    if (s == AppLifecycleState.resumed) _refresh();
+  }
+
+  Future<void> _refresh() async {
+    final r = await CallGuard.hasRole();
+    final o = await CallGuard.hasOverlay();
+    final a = await CallGuard.getAutoShield();
+    if (mounted) {
+      setState(() {
+        role = r;
+        overlay = o;
+        auto = a;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = KavachTheme.of(context);
+    final p = t.pal;
+    final ready = role && overlay && auto;
+    return KScreen(
+      header: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        BackBtn(widget.onBack),
+        Text('Shield unknown callers', style: kfont(19 * t.scale, FontWeight.w800, p.ink)),
+        const SizedBox(width: 46),
+      ]),
+      footer: [
+        KButton('Test the alert now', icon: Icons.notifications_active_outlined, kind: 'soft',
+            onTap: () => CallGuard.simulateUnknownCall()),
+        Text('Tip: press Home right after, so you can watch it float over your screen.',
+            textAlign: TextAlign.center, style: kfont(13 * t.scale, FontWeight.w600, p.inkFaint)),
+      ],
+      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const SizedBox(height: 6),
+        Text('Catch the call before you pick up', style: kfont(26 * t.scale, FontWeight.w800, p.ink, height: 1.15)),
+        const SizedBox(height: 10),
+        Text('When a number that isn’t in your contacts rings, Kavach floats a warning over the call — one tap arms the shield. Your contacts are checked only on this phone; nothing is ever sent.',
+            style: kfont(16 * t.scale, FontWeight.w500, p.inkSoft, height: 1.4)),
+        const SizedBox(height: 18),
+        _StepRow(n: '1', title: 'Let Kavach see who’s calling', sub: 'Grants the call-screening role so Android hands us the number first.', done: role, onTap: CallGuard.requestRole),
+        _StepRow(n: '2', title: 'Let Kavach float over calls', sub: 'Allows the warning bubble to appear above other apps.', done: overlay, onTap: CallGuard.requestOverlay),
+        _StepRow(n: '3', title: 'Auto-shield unknown callers', sub: auto ? 'On — you’ll be warned on unknown calls.' : 'Off', done: auto, toggle: true, value: auto, onToggle: (v) async {
+          await CallGuard.setAutoShield(v);
+          if (mounted) setState(() => auto = v);
+        }),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(color: ready ? p.safeTint : p.surface2, borderRadius: BorderRadius.circular(14)),
+          child: Text(
+              ready ? '✓ You’re covered. Unknown callers now trigger the shield.' : 'Finish the steps above to turn on the unknown-call shield.',
+              style: kfont(14.5 * t.scale, FontWeight.w700, ready ? riskInk('SAFE', p.dark) : p.inkSoft, height: 1.35)),
+        ),
+      ]),
+    );
+  }
+}
+
+class _StepRow extends StatelessWidget {
+  final String n, title, sub;
+  final bool done, toggle, value;
+  final VoidCallback? onTap;
+  final ValueChanged<bool>? onToggle;
+  const _StepRow({required this.n, required this.title, required this.sub, required this.done, this.toggle = false, this.value = false, this.onTap, this.onToggle});
+  @override
+  Widget build(BuildContext context) {
+    final t = KavachTheme.of(context);
+    final p = t.pal;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(color: p.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: done ? p.brand : p.line, width: 1.5)),
+        child: Row(children: [
+          Container(
+            width: 30, height: 30, alignment: Alignment.center,
+            decoration: BoxDecoration(color: done ? p.brand : p.surface2, shape: BoxShape.circle),
+            child: done ? Icon(Icons.check, size: 18, color: p.onColor) : Text(n, style: kfont(15 * t.scale, FontWeight.w800, p.inkSoft)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title, style: kfont(16 * t.scale, FontWeight.w800, p.ink, height: 1.2)),
+            const SizedBox(height: 2),
+            Text(sub, style: kfont(13.5 * t.scale, FontWeight.w600, p.inkFaint, height: 1.3)),
+          ])),
+          const SizedBox(width: 8),
+          if (toggle)
+            Switch(value: value, onChanged: onToggle, activeThumbColor: p.brand)
+          else if (!done)
+            GestureDetector(
+              onTap: onTap,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                decoration: BoxDecoration(color: p.brand, borderRadius: BorderRadius.circular(12)),
+                child: Text('Allow', style: kfont(14 * t.scale, FontWeight.w800, p.onColor)),
+              ),
+            ),
+        ]),
+      ),
     );
   }
 }

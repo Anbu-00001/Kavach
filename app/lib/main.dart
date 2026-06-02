@@ -12,6 +12,7 @@ import 'store.dart';
 import 'engine/kavach_engine.dart';
 import 'engine/live_listener.dart';
 import 'engine/guardian_service.dart';
+import 'native/call_guard.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +58,7 @@ class _KavachAppState extends State<KavachApp> {
   LiveListener? liveListener;
   bool liveStarting = false;
   String? liveError;
+  String liveLang = 'en'; // 'en' = MiniLM tier; others use the multilingual tier
 
   // Background guardian (Layer 2): foreground service streaming verdicts to the UI.
   bool guarding = false;
@@ -72,6 +74,17 @@ class _KavachAppState extends State<KavachApp> {
     dark = _store.dark;
     screen = _store.onboarded ? 'home' : 'onboarding';
     _loadEngine();
+    _initCallGuard();
+  }
+
+  /// Layer 0: when "Shield this call" is tapped on the unknown-call overlay, the
+  /// native side either launches us cold with a durable flag or invokes
+  /// startGuard warm. Honour both so the guard actually starts.
+  Future<void> _initCallGuard() async {
+    CallGuard.onStartGuard(() {
+      if (mounted) startGuard();
+    });
+    if (await CallGuard.consumePendingGuard() && mounted) startGuard();
   }
 
   Future<void> _loadEngine() async {
@@ -101,16 +114,58 @@ class _KavachAppState extends State<KavachApp> {
     }
   }
 
-  /// Run the real model on [text] (English or multilingual tier); null if not ready.
+  /// Run the real model on [text] (English or multilingual tier); null if not
+  /// ready. Uses analyzeDetailed so the result card can show the words the model
+  /// actually keyed on (occlusion attribution) — not latency-critical here.
   EngineResult? analyzeWith(String text, bool multilingual) {
-    if (multilingual) return mlReady ? mlEngine!.analyze(text) : null;
-    return engineReady ? engine!.analyze(text) : null;
+    if (multilingual) return mlReady ? mlEngine!.analyzeDetailed(text) : null;
+    return engineReady ? engine!.analyzeDetailed(text) : null;
   }
 
   /// Start REAL live capture: mic → Vosk → engine → live shield.
-  Future<void> startLive() async {
-    if (!engineReady || liveStarting) return;
-    final ll = liveListener ??= LiveListener(engine!)
+  /// Offline Vosk ASR model per live language. Adding a language = drop the
+  /// bundled model here (Telugu/Gujarati are available and slot in identically).
+  static String _voskModelFor(String lang) {
+    switch (lang) {
+      case 'hi':
+        return 'assets/models/vosk-model-small-hi-0.22.zip';
+      default:
+        return 'assets/models/vosk-model-small-en-us-0.15.zip';
+    }
+  }
+
+  Future<void> startLive({String lang = 'en'}) async {
+    if (liveStarting) return;
+    // Resolve the detection engine for this language: English uses the MiniLM
+    // tier; any other language uses the multilingual XLM-R tier (lazy-loaded).
+    KavachEngine? eng;
+    if (lang == 'en') {
+      if (!engineReady) return;
+      eng = engine;
+    } else {
+      setState(() {
+        liveStarting = true;
+        liveError = null;
+      });
+      if (!mlReady) await _loadMultilingual();
+      if (!mlReady) {
+        if (mounted) {
+          setState(() {
+            liveStarting = false;
+            liveError = 'Couldn’t load the multilingual model for live voice.';
+          });
+        }
+        return;
+      }
+      eng = mlEngine;
+    }
+    // Switching language needs a fresh listener (engine + ASR model both change).
+    if (liveListener != null && liveLang != lang) {
+      await liveListener!.stop();
+      liveListener = null;
+    }
+    liveLang = lang;
+    final ll = liveListener ??= LiveListener(eng!, modelAsset: _voskModelFor(lang))
       ..onUpdate = _onLiveUpdate
       ..onError = (e) {
         if (mounted) setState(() => liveError = e);
@@ -359,11 +414,14 @@ class _KavachAppState extends State<KavachApp> {
                 }),
             onDemo: startDemo,
             onTry: () => go('analyze'),
-            onLive: startLive,
+            onLive: () => startLive(lang: liveLang),
+            liveLang: liveLang,
+            onLiveLang: (l) => setState(() => liveLang = l),
             onGuard: startGuard,
             guarding: guarding,
             liveStarting: liveStarting,
             liveError: liveError,
+            onCallShield: () => go('callshield'),
             onProfile: () => go('onboarding'));
         break;
       case 'analyze':
@@ -377,6 +435,9 @@ class _KavachAppState extends State<KavachApp> {
           analyze: analyzeWith,
           onBack: () => go('home'),
         );
+        break;
+      case 'callshield':
+        body = CallShieldScreen(onBack: () => go('home'));
         break;
       case 'live':
         body = LiveShieldScreen(v: live, watchword: watchword, guardianName: guardian, minimal: minimal, onHangup: onHangup, onSafe: onSafe);

@@ -9,6 +9,7 @@ import 'dart:async';
 import 'dart:ui' show DartPluginRegistrant;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'kavach_engine.dart';
 import 'live_listener.dart';
 
@@ -16,6 +17,22 @@ const guardianChannelId = 'kavach_guardian';
 
 /// Configure the service once at app startup (does not start it).
 Future<void> configureGuardian() async {
+  // CRITICAL: the foreground-service notification references this channel id.
+  // flutter_background_service does NOT reliably create it on every ROM (e.g.
+  // OPPO/ColorOS), so startForeground() would post to a non-existent channel —
+  // Android 14 then throws CannotPostForegroundServiceNotificationException and
+  // kills the process. Create the channel ourselves first so it always exists.
+  const channel = AndroidNotificationChannel(
+    guardianChannelId,
+    'Kavach Guardian',
+    description: 'Shows while Kavach is watching a call for scams.',
+    importance: Importance.low, // quiet, persistent — no sound/heads-up
+  );
+  await FlutterLocalNotificationsPlugin()
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
   await FlutterBackgroundService().configure(
     androidConfiguration: AndroidConfiguration(
       onStart: guardianOnStart,

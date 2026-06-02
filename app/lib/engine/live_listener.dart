@@ -15,10 +15,13 @@ import 'package:vosk_flutter/vosk_flutter.dart';
 import 'kavach_engine.dart';
 
 class LiveListener {
-  final KavachEngine engine; // English tier (WordPiece + 22MB MiniLM)
-  LiveListener(this.engine);
+  final KavachEngine engine; // detection tier (English MiniLM, or multilingual XLM-R)
+  // The offline Vosk ASR model for this language. English by default; pass a
+  // bundled per-language model (e.g. Hindi) for genuine multilingual live voice.
+  final String modelAsset;
+  LiveListener(this.engine,
+      {this.modelAsset = 'assets/models/vosk-model-small-en-us-0.15.zip'});
 
-  static const _modelAsset = 'assets/models/vosk-model-small-en-us-0.15.zip';
   static const _partialThrottle = Duration(milliseconds: 500);
 
   final _vosk = VoskFlutterPlugin.instance();
@@ -45,7 +48,7 @@ class LiveListener {
   Future<void> start() async {
     if (_running) return;
     reset();
-    final modelPath = await ModelLoader().loadFromAssets(_modelAsset);
+    final modelPath = await ModelLoader().loadFromAssets(modelAsset);
     _model = await _vosk.createModel(modelPath);
     _recognizer = await _vosk.createRecognizer(model: _model!, sampleRate: 16000);
     _speech = await _vosk.initSpeechService(_recognizer!);
