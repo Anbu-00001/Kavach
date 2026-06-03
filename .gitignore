@@ -1,44 +1,71 @@
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
+# ============================================================================
+# Kavach — repository root .gitignore
+#
+# App-subtree ignores live in app/.gitignore and app/android/.gitignore (the
+# standard Flutter/Android sets). This file covers the repo root, the Python
+# ML pipeline in core/, the Rust crate, and cross-cutting editor/OS/build noise.
+#
+# IMPORTANT — assets are committed ON PURPOSE via Git LFS (see .gitattributes:
+# *.onnx, *.onnx.data, *.safetensors). The bundled models and audio the app
+# ships — *.onnx, *.so, *.zip, *.mp3, *.wav, *.safetensors — are TRACKED.
+# Do NOT add blanket extension ignores for those here, or a fresh clone will be
+# missing the model weights and warning clips it needs to run.
+# ============================================================================
 
-# IDE and editors
-.claude/
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Rust build artifacts
-target/
-
-# Flutter / Dart
-.dart_tool/
+# ── Build output (regenerated) ──────────────────────────────────────────────
 build/
+.dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 *.g.dart
+.gradle/
+.cxx/
+local.properties
+# Rust / Cargo
+target/
 
-# Android build
+# ── Python (core/ ML + eval pipeline) ───────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ── Large training artifacts that are NOT shipped ──────────────────────────
+# Retrain candidate (~90 MB safetensors) kept locally only for A/B comparison;
+# the shipped weights live in core/model/intent and app/assets/model.
+core/model/intent_candidate/
+
+# ── Packaged binaries (rebuilt from source) ─────────────────────────────────
 *.apk
 *.aab
+
+# ── Secrets / signing — never commit ────────────────────────────────────────
 *.keystore
 *.jks
+key.properties
+.env
+.env.*
 
-# Gradle
-.gradle/
-local.properties
+# ── Editors / IDEs ──────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
 
-# Model weights (large binaries — commit intentionally if needed)
-*.pt
-*.pth
-*.bin
-*.safetensors
+# ── Claude Code local state (a shared .claude/settings.json may be committed) ─
+.claude/settings.local.json
 
-# retrain candidate artifact (90MB, not shipped — kept locally for comparison)
-core/model/intent_candidate/
+# ── OS cruft ────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs & scratch ──────────────────────────────────────────────────────────
+*.log
+*.tmp
