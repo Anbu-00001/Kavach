@@ -14,7 +14,23 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:vosk_flutter/vosk_flutter.dart';
 import 'kavach_engine.dart';
 
-class LiveListener {
+/// Shared surface for the two live-audio backends so the UI can hold either:
+///   • [LiveListener]    — Vosk streaming (English + the guardian)
+///   • WhisperListener   — sherpa-onnx Whisper (every other language)
+abstract class CallAudioListener {
+  List<String> get transcript;
+  String? get partial;
+  EngineResult? get peak;
+  bool get running;
+  set onUpdate(void Function()? cb);
+  set onError(void Function(String error)? cb);
+  Future<bool> ensurePermission();
+  Future<void> start();
+  Future<void> stop();
+  void reset();
+}
+
+class LiveListener implements CallAudioListener {
   final KavachEngine engine; // detection tier (English MiniLM, or multilingual XLM-R)
   // The offline Vosk ASR model for this language. English by default; pass a
   // bundled per-language model (e.g. Hindi) for genuine multilingual live voice.

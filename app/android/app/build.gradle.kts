@@ -39,6 +39,19 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    // Both the onnxruntime plugin and sherpa_onnx ship libonnxruntime.so (+ the
+    // STL). Keep one copy instead of failing the merge. sherpa's is newer and
+    // backward-compatible with the plugin's C-API calls.
+    packaging {
+        jniLibs {
+            pickFirsts += setOf(
+                "**/libonnxruntime.so",
+                "**/libonnxruntime4j_jni.so",
+                "**/libc++_shared.so"
+            )
+        }
+    }
 }
 
 flutter {

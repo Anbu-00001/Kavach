@@ -9,8 +9,10 @@ import 'screens.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'store.dart';
+import 'package:sherpa_onnx/sherpa_onnx.dart' as so;
 import 'engine/kavach_engine.dart';
 import 'engine/live_listener.dart';
+import 'engine/whisper_listener.dart';
 import 'engine/guardian_service.dart';
 import 'native/call_guard.dart';
 

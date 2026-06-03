@@ -43,6 +43,12 @@ dependencies:
   flutter_background_service: ^5.1.0
   permission_handler: ^12.0.0
   flutter_background_service_android: ^6.3.1
+  # sherpa-onnx: offline Whisper ASR for live voice in ANY language (incl. Tamil
+  # + every Indian language) — covers what Vosk can't. Bundles its own ONNX
+  # Runtime, so we pickFirst libonnxruntime.so against the onnxruntime plugin.
+  sherpa_onnx: ^1.13.2
+  record: ^5.1.0        # raw PCM mic stream feeding the Whisper VAD pipeline
+  path_provider: ^2.1.0 # copy the Whisper model assets to a file path for sherpa
   # Needed to CREATE the guardian notification channel up-front. Without an
   # existing channel, startForeground() posts a "Bad notification" and Android
   # 14 kills the process (CannotPostForegroundServiceNotificationException).
@@ -90,10 +96,14 @@ flutter:
     # SentencePiece tokenizer.json, tokenized by the bundled Rust lib over FFI.
     - assets/model/intent_ml.int8.onnx
     - assets/model/intent_ml.tokenizer.json
-    # Offline streaming ASR models (Vosk small) for live call capture. English +
-    # Hindi bundled; Telugu/Gujarati slot in identically (same code path).
+    # Offline streaming ASR (Vosk small English) for the live English path + guardian.
     - assets/models/vosk-model-small-en-us-0.15.zip
-    - assets/models/vosk-model-small-hi-0.22.zip
+    # Offline Whisper-tiny (multilingual) via sherpa-onnx: ONE model that does
+    # Tamil + every Indian language + ~99 more. Used for all non-English live voice.
+    - assets/models/whisper/encoder.int8.onnx
+    - assets/models/whisper/decoder.int8.onnx
+    - assets/models/whisper/tokens.txt
+    - assets/models/whisper/silero_vad.onnx
     # Synthesized speech clips (16kHz) for the on-device ASR→engine test.
     - assets/test/scam_en.wav
     - assets/test/legit_en.wav
