@@ -15,6 +15,7 @@ import 'wordpiece.dart';
 import 'fusion.dart';
 import 'classifier.dart';
 import 'sp_tokenizer.dart';
+import 'conversation_risk.dart';
 
 /// A tokenize step: text → (input_ids, attention_mask).
 typedef Encode = ({List<int> inputIds, List<int> attentionMask}) Function(String text);
@@ -48,6 +49,13 @@ class KavachEngine {
 
   bool get ready => _clf.ready;
   List<String> get tacticOrder => _fusion.order;
+
+  /// Start a fresh conversation-level accumulator for one call. Feed it each
+  /// window's [EngineResult.probs] to get the slow-burn (cross-window) verdict —
+  /// the live shield uses this so a script that spreads its tactics over time
+  /// still adds up. See [ConversationRisk].
+  ConversationRisk newConversation({double decay = 0.85}) =>
+      ConversationRisk(_fusion, decay: decay);
 
   /// English tier: WordPiece + 22MB MiniLM. Fast; loaded at startup.
   static Future<KavachEngine> load() async {

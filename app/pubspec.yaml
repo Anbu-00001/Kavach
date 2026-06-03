@@ -47,7 +47,7 @@ dependencies:
   # + every Indian language) — covers what Vosk can't. Bundles its own ONNX
   # Runtime, so we pickFirst libonnxruntime.so against the onnxruntime plugin.
   sherpa_onnx: ^1.13.2
-  record: ^5.1.0        # raw PCM mic stream feeding the Whisper VAD pipeline
+  record: ^6.1.0        # raw PCM mic stream feeding the Whisper VAD pipeline
   path_provider: ^2.1.0 # copy the Whisper model assets to a file path for sherpa
   # Needed to CREATE the guardian notification channel up-front. Without an
   # existing channel, startForeground() posts a "Bad notification" and Android

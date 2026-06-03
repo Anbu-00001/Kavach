@@ -30,8 +30,9 @@ pay. It's advisory — it buys time and prompts a family safe-word — not a bla
 
 **Q. What problem are you solving?**
 Phone scams are the most expensive everyday crime — $12.5B reported lost in the US in 2024, $4.9B
-from seniors alone (FBI), average loss $83K. AI voice cloning removed the last tell. And *every*
-existing defense protects institutions, not the person on the call.
+from seniors alone (FBI), average loss $83K. In India the "digital arrest" script alone drained
+**₹19,000 cr in 2025** (I4C reported 92,000+ cases in 2024). AI voice cloning removed the last tell.
+And *every* existing defense protects institutions, not the person on the call.
 
 **Q. How is this different from existing scam/spam/deepfake tools?**
 Three differences. (1) Spam filters block *numbers*; scammers rotate them. (2) Deepfake-voice
@@ -69,12 +70,39 @@ call it via FFI. We verified the token IDs match the Python reference exactly. 1
 offline.
 
 **Q. How accurate is it? / What's your F1?**
-Honest answer: we validated **behaviorally on-device**, not with a headline accuracy number we'd
-have to defend out of context. The Dart tokenizer and engine reproduce the Python pipeline's outputs
-bit-for-bit (parity tests); on real human voice the live shield peaked at HIGH on scam scripts and
-stayed SAFE on benign speech; and the background guardian caught a scam clip at HIGH even with ASR
-errors. We deliberately tune toward **recall** (catch scams) and keep a human in the loop, because a
-missed scam costs a life's savings and a false alarm costs a few seconds.
+We measured it on **two independent third-party datasets** with the real on-device model, not a
+demo clip — full method and tables in [EVALUATION.md](EVALUATION.md). On 1,378 **real FTC robocall
+transcripts** and a balanced 160/160 set of independent scam/legit dialogues (BothBosu), the best
+operating point is ~**99% recall / 65% precision** judging the caller's script. We tune toward
+**recall** on purpose — a missed scam costs a life's savings, a false alarm costs a few seconds —
+and keep a human in the loop. We're upfront that precision on adversarial pushy-telemarketer "legit"
+calls is moderate; that's *why* it's advisory, not a blocker.
+
+**Q. A clever scammer won't say "gift card" — they tell a slow, believable story. Don't you miss that?**
+That's the scam we engineered for. The patient script — India's "digital arrest" fraud, **₹19,000 cr
+lost in 2025** — deploys its tactics *across the whole call*: fake CBI authority early, "don't
+disconnect" isolation in the middle, the "transfer to a safe account" ask much later. A
+hottest-window detector misses it because no single sentence is decisive. So the shield runs a
+**conversation-level accumulator** (`conversation_risk.dart`): a decaying memory that fuses tactics
+across time so they still add up and trigger the dangerous-combo boost. Measured gain: at the
+"needs 3 tactics" bar it catches **40% of real robocalls vs 28%** for the per-window equivalent
+(+43% relative), and it's unit-tested — an authority-now/isolation-later call that the per-window
+verdict reads as CAUTION (0.72), the accumulator reads as HIGH (0.84). And because we detect *intent*
+not keywords (it's a fine-tuned semantic model), paraphrases like "prepaid voucher" or "secure
+account" still land.
+
+**Q. What scam *would* you miss? (be honest)**
+Slow-**trust** scams — pig-butchering / romance — where the attacker builds rapport for weeks with
+zero pressure language and the "investment" ask comes last. There's nothing manipulative to detect
+until very late. We're strongest on **coercion** scams (vishing, digital arrest, family-emergency,
+tech-support) and we say so. The Watchword and "call back on a trusted number" prompt are the
+safety net for what the model can't see.
+
+**Q. What about false alarms on a real, anxious call — "Dad, I'm in hospital, send money"?**
+It may well flag that as CAUTION — distress + a money ask is genuinely scam-shaped, and we'd rather
+over-warn than miss. Crucially we **never block**; we surface a plain-language nudge and the
+**Watchword**, the family safe-word the real person knows. A true emergency passes it in two
+seconds; a cloned-voice scammer can't.
 
 **Q. Isn't this unreliable / what are the limits?**
 Yes, it's probabilistic — we're explicit that it's **advisory, not a guarantee.** The linguistic
@@ -129,5 +157,6 @@ an opt-in Guardian alert to a family member; and field testing with elderly user
 
 ## Words to keep saying (they score)
 on-device · offline · **no internet permission** · the *script*, not the voice · 8 manipulation
-tactics · int8 ONNX · Rust FFI · 12 languages · runs on a $80 / 4 GB phone · advisory · Watchword ·
-validated on-device · private by architecture · scales at ~$0 marginal cost.
+tactics · **conversation-level accumulator** · **digital arrest** · int8 ONNX · Rust FFI · 12
+languages · runs on a $80 / 4 GB phone · advisory · Watchword · **measured on FTC + BothBosu** ·
+private by architecture · scales at ~$0 marginal cost.

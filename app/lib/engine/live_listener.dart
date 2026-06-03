@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vosk_flutter/vosk_flutter.dart';
 import 'kavach_engine.dart';
+import 'conversation_risk.dart';
 
 /// Shared surface for the two live-audio backends so the UI can hold either:
 ///   • [LiveListener]    — Vosk streaming (English + the guardian)
@@ -38,32 +39,39 @@ class LiveListener implements CallAudioListener {
   LiveListener(this.engine,
       {this.modelAsset = 'assets/models/vosk-model-small-en-us-0.15.zip'});
 
-  static const _partialThrottle = Duration(milliseconds: 500);
-
   final _vosk = VoskFlutterPlugin.instance();
   Model? _model;
   Recognizer? _recognizer;
   SpeechService? _speech;
   StreamSubscription<String>? _resSub, _partSub;
   bool _running = false;
-  DateTime _lastPartialClassify = DateTime.fromMillisecondsSinceEpoch(0);
+  ConversationRisk? _convo; // slow-burn accumulator across the whole call
 
   // ── live outputs (read by the UI on each onUpdate) ──
+  @override
   final List<String> transcript = []; // recent finalized caller utterances
+  @override
   String? partial; // in-progress utterance
+  @override
   EngineResult? peak; // highest-risk verdict seen this session
+  @override
   void Function()? onUpdate;
+  @override
   void Function(String error)? onError;
 
+  @override
   bool get running => _running;
 
   /// Ask for the mic permission (shows the system dialog the first time).
+  @override
   Future<bool> ensurePermission() async => (await Permission.microphone.request()).isGranted;
 
   /// Load the Vosk model (unzips ~40MB on first run) and start streaming.
+  @override
   Future<void> start() async {
     if (_running) return;
     reset();
+    _convo = engine.newConversation();
     final modelPath = await ModelLoader().loadFromAssets(modelAsset);
     _model = await _vosk.createModel(modelPath);
     _recognizer = await _vosk.createRecognizer(model: _model!, sampleRate: 16000);
@@ -79,15 +87,10 @@ class LiveListener implements CallAudioListener {
   void _onPartial(String json) {
     final text = _field(json, 'partial');
     if (text.isEmpty) return;
+    // Partials are just for the live caption — we only feed the accumulator
+    // finalized utterances so the same words aren't counted as they're typed out.
     partial = text;
-    // Throttle inference on partials — they fire many times per second.
-    final now = DateTime.now();
-    if (now.difference(_lastPartialClassify) >= _partialThrottle) {
-      _lastPartialClassify = now;
-      _classify(text);
-    } else {
-      onUpdate?.call();
-    }
+    onUpdate?.call();
   }
 
   void _onResult(String json) {
@@ -106,11 +109,16 @@ class LiveListener implements CallAudioListener {
 
   void _classify(String text) {
     try {
+      // Per-window verdict (this utterance) feeds the conversation accumulator;
+      // the shield surfaces the CUMULATIVE verdict so a slow-burn script adds up.
       final r = engine.analyze(text);
-      final isPeak = peak == null || r.score > peak!.score;
-      if (isPeak) peak = r;
+      final cv = _convo!.update(r.probs);
+      final cum = EngineResult(cv.level, cv.score, cv.tactics, r.probs);
+      final isPeak = peak == null || cum.score > peak!.score;
+      if (isPeak) peak = cum;
       if (kDebugMode) {
-        debugPrint('KAVACH_LIVE "$text" -> ${r.level} ${r.score.toStringAsFixed(2)} ${r.tactics}${isPeak ? '  [PEAK]' : ''}');
+        debugPrint('KAVACH_LIVE "$text" -> win ${r.level} ${r.score.toStringAsFixed(2)}'
+            ' | cum ${cum.level} ${cum.score.toStringAsFixed(2)} ${cum.tactics}${isPeak ? '  [PEAK]' : ''}');
       }
       onUpdate?.call();
     } catch (e) {
@@ -126,12 +134,15 @@ class LiveListener implements CallAudioListener {
     }
   }
 
+  @override
   void reset() {
     transcript.clear();
     partial = null;
     peak = null;
+    _convo?.reset();
   }
 
+  @override
   Future<void> stop() async {
     _running = false;
     await _partSub?.cancel();

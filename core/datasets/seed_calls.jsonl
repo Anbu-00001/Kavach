@@ -18,3 +18,8 @@
 {"text": "Hi, I'm returning your call about the plumbing quote for the kitchen sink.", "label": "legit", "tactics": []}
 {"text": "It's your sister, dinner is at seven, bring the dessert you promised.", "label": "legit", "tactics": []}
 {"text": "Reminder from the dentist: your cleaning is tomorrow morning, reply to reschedule.", "label": "legit", "tactics": []}
+{"text": "This is the CBI cyber crime branch. A money laundering case has been registered against your Aadhaar, you are under digital arrest. Do not disconnect and do not tell anyone.", "label": "scam", "tactics": ["AUTHORITY_IMPERSONATION", "ISOLATION", "SECRECY"]}
+{"text": "To clear your name you must transfer the funds to a safe account for verification, it is fully refundable after the case closes.", "label": "scam", "tactics": ["UNTRACEABLE_PAYMENT"]}
+{"text": "Your parcel from customs contained illegal items, stay on video for the next few days while we investigate and keep your camera on.", "label": "scam", "tactics": ["AUTHORITY_IMPERSONATION", "ISOLATION"]}
+{"text": "I made huge profits on this trading platform, it's a guaranteed returns investment opportunity, let me help you double your money.", "label": "scam", "tactics": ["UNTRACEABLE_PAYMENT"]}
+{"text": "Hey it's me, I'm a little stressed about my exam results tomorrow, can we talk tonight?", "label": "legit", "tactics": []}

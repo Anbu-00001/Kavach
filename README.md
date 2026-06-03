@@ -78,6 +78,16 @@ Kavach boosts the risk — because that combo is basically never *not* a scam �
 deterministic — never LLM-generated** — so the app can *never* hallucinate something to a panicking
 user. That part was non-negotiable for us.
 
+**The patient-scam problem.** The dangerous scripts don't blurt everything in one breath — India's
+"digital arrest" fraud (₹19,000 cr lost in 2025) spreads its tactics across the *whole* call: fake
+authority early, "don't disconnect" isolation in the middle, "transfer to a safe account" much
+later. A detector that only scores the hottest sentence misses it. So Kavach keeps a
+**conversation-level accumulator** — a decaying memory that fuses tactics *across time* so they
+still add up. Measured against 1,378 real FTC robocalls it lifts recall from **28% → 40%** over the
+per-window approach, and it's unit-tested on the slow-burn flip. Full numbers and method:
+**[docs/EVALUATION.md](docs/EVALUATION.md)** (no demo-clip cherry-picking — independent FTC +
+BothBosu datasets, the real on-device model).
+
 ## 4. How it works — the pipeline, 100% on-device
 
 ```mermaid

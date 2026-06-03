@@ -18,6 +18,12 @@ import 'native/call_guard.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    so.initBindings(); // load sherpa-onnx native bindings (Whisper multilingual ASR)
+    debugPrint('KAVACH_SHERPA_INIT: ok');
+  } catch (e, st) {
+    debugPrint('KAVACH_SHERPA_INIT_FAILED: $e\n$st');
+  }
   await configureGuardian(); // set up the background guardian service (not started)
   final store = await Store.load();
   runApp(KavachApp(store: store));
@@ -56,11 +62,12 @@ class _KavachAppState extends State<KavachApp> {
   String? mlError;
   bool get mlReady => mlEngine?.ready ?? false;
 
-  // Live mic → Vosk → engine (Layer 1). Drives the live shield with real audio.
-  LiveListener? liveListener;
+  // Live mic → ASR → engine (Layer 1). English uses Vosk (streaming); every other
+  // language uses Whisper (sherpa-onnx). Both implement CallAudioListener.
+  CallAudioListener? liveListener;
   bool liveStarting = false;
   String? liveError;
-  String liveLang = 'en'; // 'en' = MiniLM tier; others use the multilingual tier
+  String liveLang = 'en'; // 'en' = Vosk+MiniLM; others = Whisper+multilingual tier
 
   // Background guardian (Layer 2): foreground service streaming verdicts to the UI.
   bool guarding = false;
@@ -125,17 +132,6 @@ class _KavachAppState extends State<KavachApp> {
   }
 
   /// Start REAL live capture: mic → Vosk → engine → live shield.
-  /// Offline Vosk ASR model per live language. Adding a language = drop the
-  /// bundled model here (Telugu/Gujarati are available and slot in identically).
-  static String _voskModelFor(String lang) {
-    switch (lang) {
-      case 'hi':
-        return 'assets/models/vosk-model-small-hi-0.22.zip';
-      default:
-        return 'assets/models/vosk-model-small-en-us-0.15.zip';
-    }
-  }
-
   Future<void> startLive({String lang = 'en'}) async {
     if (liveStarting) return;
     // Resolve the detection engine for this language: English uses the MiniLM
@@ -161,17 +157,22 @@ class _KavachAppState extends State<KavachApp> {
       }
       eng = mlEngine;
     }
-    // Switching language needs a fresh listener (engine + ASR model both change).
+    // Switching language needs a fresh listener (engine + ASR backend change:
+    // English → Vosk streaming, any other language → Whisper).
     if (liveListener != null && liveLang != lang) {
       await liveListener!.stop();
       liveListener = null;
     }
     liveLang = lang;
-    final ll = liveListener ??= LiveListener(eng!, modelAsset: _voskModelFor(lang))
-      ..onUpdate = _onLiveUpdate
-      ..onError = (e) {
+    var ll = liveListener;
+    if (ll == null) {
+      ll = lang == 'en' ? LiveListener(eng!) : WhisperListener(eng!, language: lang);
+      ll.onUpdate = _onLiveUpdate;
+      ll.onError = (e) {
         if (mounted) setState(() => liveError = e);
       };
+      liveListener = ll;
+    }
     setState(() {
       liveError = null;
       liveStarting = true;

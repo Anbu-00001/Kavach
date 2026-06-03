@@ -22,7 +22,7 @@
       "id": "UNTRACEABLE_PAYMENT",
       "name": "Untraceable-payment request",
       "weight": 0.95,
-      "cues": ["gift card", "gift cards", "google play card", "apple card", "steam card", "bitcoin", "crypto", "wire transfer", "western union", "moneygram", "zelle", "cash app", "go to the store", "read me the numbers", "buy a card"],
+      "cues": ["gift card", "gift cards", "google play card", "apple card", "steam card", "bitcoin", "crypto", "wire transfer", "western union", "moneygram", "zelle", "cash app", "go to the store", "read me the numbers", "buy a card", "safe account", "secure account", "verification account", "transfer to a safe account", "rbi account", "security deposit", "refundable deposit", "transfer for verification", "deposit to clear your name", "guaranteed returns", "double your money", "investment opportunity", "trading platform"],
       "explanation": "This caller wants gift cards, crypto, or a wire transfer. No real agency or family member is ever paid this way.",
       "action": "Stop. Do not buy or send anything. This is how scammers take money they can't be forced to return."
     },
@@ -30,8 +30,8 @@
       "id": "AUTHORITY_IMPERSONATION",
       "name": "Authority impersonation",
       "weight": 0.75,
-      "cues": ["this is the police", "i'm an officer", "from the irs", "from the tax department", "social security", "your warrant", "i'm your lawyer", "from your bank's fraud team", "federal agent", "you will be arrested"],
-      "explanation": "This caller claims to be police, a bank, or the government. Real officials don't demand payment or secrecy over the phone.",
+      "cues": ["this is the police", "i'm an officer", "from the irs", "from the tax department", "social security", "your warrant", "i'm your lawyer", "from your bank's fraud team", "federal agent", "you will be arrested", "this is the cbi", "from the cbi", "enforcement directorate", "cyber crime branch", "narcotics department", "from customs", "money laundering case", "case has been registered", "your aadhaar", "your aadhaar is linked", "your parcel", "your courier", "your sim card is involved", "digital arrest", "you are under arrest", "fir has been filed"],
+      "explanation": "This caller claims to be police, a bank, or the government. Real officials don't demand payment or secrecy over the phone — there is no such thing as a 'digital arrest'.",
       "action": "Hang up and call the agency back using the number on their official website or your card."
     },
     {
@@ -46,7 +46,7 @@
       "id": "ISOLATION",
       "name": "Isolation / stay-on-the-line",
       "weight": 0.8,
-      "cues": ["don't hang up", "stay on the line", "don't call anyone", "keep me on the phone", "don't put me on hold", "don't talk to anyone else", "stay with me"],
+      "cues": ["don't hang up", "stay on the line", "don't call anyone", "keep me on the phone", "don't put me on hold", "don't talk to anyone else", "stay with me", "stay on video", "keep your camera on", "don't leave the room", "for the next few days", "remain on the call", "do not disconnect", "you cannot tell anyone"],
       "explanation": "This caller won't let you hang up. That's so no one else can warn you it's a scam.",
       "action": "It is always safe to hang up. Do it, then verify through someone you trust."
     },

@@ -290,28 +290,31 @@ class _LiveLangPicker extends StatelessWidget {
   final String lang;
   final ValueChanged<String> onPick;
   const _LiveLangPicker({required this.lang, required this.onPick});
-  static const _langs = [('en', 'English'), ('hi', 'हिंदी')];
+  // English streams via Vosk; the rest transcribe via on-device Whisper, which
+  // covers any language (Tamil, Telugu, +~99 more drop in by code).
+  static const _langs = [('en', 'English'), ('hi', 'हिंदी'), ('ta', 'தமிழ்'), ('te', 'తెలుగు')];
   @override
   Widget build(BuildContext context) {
     final t = KavachTheme.of(context);
     final p = t.pal;
-    return Row(children: [
-      Icon(Icons.translate, size: 18, color: p.inkFaint),
-      const SizedBox(width: 8),
-      Text('Live voice', style: kfont(14 * t.scale, FontWeight.w700, p.inkSoft)),
-      const Spacer(),
-      for (final (code, label) in _langs)
-        Padding(
-          padding: const EdgeInsets.only(left: 8),
-          child: GestureDetector(
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Icon(Icons.translate, size: 18, color: p.inkFaint),
+        const SizedBox(width: 8),
+        Text('Live voice language', style: kfont(14 * t.scale, FontWeight.w700, p.inkSoft)),
+      ]),
+      const SizedBox(height: 10),
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        for (final (code, label) in _langs)
+          GestureDetector(
             onTap: () => onPick(code),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
               decoration: BoxDecoration(color: lang == code ? p.brand : p.surface2, borderRadius: BorderRadius.circular(99)),
-              child: Text(label, style: kfont(14 * t.scale, FontWeight.w700, lang == code ? p.onColor : p.inkSoft)),
+              child: Text(label, style: kfont(14.5 * t.scale, FontWeight.w700, lang == code ? p.onColor : p.inkSoft)),
             ),
           ),
-        ),
+      ]),
     ]);
   }
 }

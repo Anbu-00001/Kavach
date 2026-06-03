@@ -14,6 +14,11 @@ class OnnxClassifier {
 
   /// Initialize ORT and load the model from raw bytes (read from assets).
   void init(Uint8List modelBytes) {
+    // We ship ONE onnxruntime — sherpa-onnx's 1.13.0 (so Whisper's native lib
+    // links) — and this plugin defaults to requesting API v14, which 1.13.0
+    // doesn't provide. Pin it to v13 so the classifier runs on the same runtime.
+    // Must be set BEFORE the first OrtEnv.instance access (it caps the version).
+    OrtEnv.setApiVersion(OrtApiVersion.api13);
     OrtEnv.instance.init();
     _session = OrtSession.fromBuffer(modelBytes, OrtSessionOptions());
   }

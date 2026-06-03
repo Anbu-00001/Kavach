@@ -8,7 +8,6 @@
 // Still 100% offline — sherpa-onnx runs the ONNX model on-device; nothing leaves.
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -16,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:sherpa_onnx/sherpa_onnx.dart' as so;
 import 'kavach_engine.dart';
+import 'conversation_risk.dart';
 import 'live_listener.dart' show CallAudioListener;
 
 class WhisperListener implements CallAudioListener {
@@ -31,6 +31,7 @@ class WhisperListener implements CallAudioListener {
   so.VoiceActivityDetector? _vad;
   StreamSubscription<Uint8List>? _audioSub;
   bool _running = false;
+  ConversationRisk? _convo; // slow-burn accumulator across the whole call
 
   // ── live outputs (read by the UI on each onUpdate) ──
   @override
@@ -54,6 +55,7 @@ class WhisperListener implements CallAudioListener {
   Future<void> start() async {
     if (_running) return;
     reset();
+    _convo = engine.newConversation();
     final dir = await _ensureModels();
 
     _recognizer = so.OfflineRecognizer(so.OfflineRecognizerConfig(
@@ -118,11 +120,16 @@ class WhisperListener implements CallAudioListener {
       while (transcript.length > 6) {
         transcript.removeAt(0);
       }
+      // Per-window verdict feeds the conversation accumulator; the shield shows
+      // the CUMULATIVE verdict so tactics spread across the call still add up.
       final r = engine.analyze(text);
-      final isPeak = peak == null || r.score > peak!.score;
-      if (isPeak) peak = r;
+      final cv = _convo!.update(r.probs);
+      final cum = EngineResult(cv.level, cv.score, cv.tactics, r.probs);
+      final isPeak = peak == null || cum.score > peak!.score;
+      if (isPeak) peak = cum;
       if (kDebugMode) {
-        debugPrint('KAVACH_WHISPER "$text" -> ${r.level} ${r.score.toStringAsFixed(2)} ${r.tactics}${isPeak ? '  [PEAK]' : ''}');
+        debugPrint('KAVACH_WHISPER "$text" -> win ${r.level} ${r.score.toStringAsFixed(2)}'
+            ' | cum ${cum.level} ${cum.score.toStringAsFixed(2)} ${cum.tactics}${isPeak ? '  [PEAK]' : ''}');
       }
       onUpdate?.call();
     } catch (e) {
@@ -162,6 +169,7 @@ class WhisperListener implements CallAudioListener {
     transcript.clear();
     partial = null;
     peak = null;
+    _convo?.reset();
   }
 
   @override
