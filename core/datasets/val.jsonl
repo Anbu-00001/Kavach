@@ -1,270 +1,210 @@
-{"text": "Hello? hey, can you pick up milk on your way home tonight let me know.", "labels": []}
-{"text": "i'm calling from the irs and mom i messed up really badly and within the next hour.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK", "URGENCY"]}
-{"text": "Please, this is your internet provider customer support following up on your ticket, no action needed thanks.", "labels": []}
-{"text": "Okay so right now; send it by wire transfer.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "Okay so it's the school office, your son left his lunchbox call me back when you can.", "labels": []}
-{"text": "hey, can you pick up milk on your way home tonight let me know.", "labels": []}
-{"text": "Please, wire the bail money over, and don't mention this to the family.", "labels": ["UNTRACEABLE_PAYMENT", "SECRECY"]}
-{"text": "Listen, the movie starts at eight so let's meet at seven thirty have a good day.", "labels": []}
-{"text": "Please, the deadline is today, and please don't tell mom.", "labels": ["URGENCY", "SECRECY"]}
-{"text": "Listen, i paid you back for lunch over the usual app, check when you get a sec.", "labels": []}
-{"text": "Listen, i'm calling from the irs. i'm in serious trouble.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
-{"text": "Hi, calling about the job interview, are you free Tuesday morning.", "labels": []}
-{"text": "Hey, they've taken me and i'm scared, please don't tell mom.", "labels": ["DISTRESS_HOOK", "SECRECY"]}
-{"text": "Please, i'm in the hospital and it's bad and send bitcoin to this wallet and don't mention this to the family.", "labels": ["DISTRESS_HOOK", "UNTRACEABLE_PAYMENT", "SECRECY"]}
-{"text": "Hey, i was trying to reach Sam, sorry to bother you, have a good day call me back when you can.", "labels": []}
-{"text": "you have to act fast and confirm your social security number for me.", "labels": ["URGENCY", "IDENTITY_PROBE"]}
-{"text": "Listen, it's your son calling. this is the tax department.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION"]}
-{"text": "Hello? mom transferred you some birthday money, it should show up tomorrow love you.", "labels": []}
-{"text": "Listen, do it this minute; transfer the crypto now.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "Listen, hi, this is Raj from QuickShip Logistics, we have a special offer on your plan this month, no pressure have a good day.", "labels": []}
-{"text": "Please, what's the one-time password you got, and send it by wire transfer, and don't tell anyone.", "labels": ["IDENTITY_PROBE", "UNTRACEABLE_PAYMENT", "SECRECY"]}
-{"text": "Hey, hi grandpa it's your granddaughter. send it through zelle to this number.", "labels": ["RELATIONSHIP_SPOOF", "UNTRACEABLE_PAYMENT"]}
-{"text": "Please, i'm calling from the gas company about renewing your policy, call back whenever suits you have a good day.", "labels": []}
-{"text": "Hi, i'm in serious trouble; give me the verification code.", "labels": ["DISTRESS_HOOK", "IDENTITY_PROBE"]}
-{"text": "Hey, it's your son calling and stay on the line with me the whole time and verify your date of birth.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION", "IDENTITY_PROBE"]}
-{"text": "Listen, this is City Auto Repair, you're eligible for a loyalty discount, want me to email the details no rush.", "labels": []}
-{"text": "Listen, this is the library, the book you reserved is available for pickup have a good day.", "labels": []}
-{"text": "this is customs and border protection, and tell me your card's cvv number.", "labels": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
-{"text": "Hi, i'm in the hospital and it's bad; what's the one-time password you got.", "labels": ["DISTRESS_HOOK", "IDENTITY_PROBE"]}
-{"text": "Please, i'm calling from QuickShip Logistics about renewing your policy, call back whenever suits you.", "labels": []}
-{"text": "i'm calling from Sunrise Bank about renewing your policy, call back whenever suits you talk soon.", "labels": []}
-{"text": "Listen, hello? oh sorry, i must have dialed the wrong number see you then.", "labels": []}
-{"text": "Hey, the bank app is showing your new card was delivered, activate it whenever call me back when you can.", "labels": []}
-{"text": "Listen, the movie starts at eight so let's meet at seven thirty call me back when you can.", "labels": []}
-{"text": "Hi, your insurance renewal is coming up next month, no hurry to decide.", "labels": []}
-{"text": "Hi, Priya here from the gas company, just following up on the quote we sent you talk soon.", "labels": []}
-{"text": "Hello? it's your sister, dinner is at seven, bring the dessert you promised call me back when you can.", "labels": []}
-{"text": "Please, don't mention this to the family.", "labels": ["SECRECY"]}
-{"text": "Okay so this is the social security administration; right now; send it through zelle to this number.", "labels": ["AUTHORITY_IMPERSONATION", "URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "Please, dad, don't you recognize my voice and tell me your card's cvv number.", "labels": ["RELATIONSHIP_SPOOF", "IDENTITY_PROBE"]}
-{"text": "Please, calling from Sunrise Bank to confirm your booking, nothing needed from you thanks.", "labels": []}
-{"text": "Listen, this is customs and border protection; i'm in serious trouble.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
-{"text": "Okay so it's me, my voice sounds off because i have a cold, immediately.", "labels": ["RELATIONSHIP_SPOOF", "URGENCY"]}
-{"text": "Listen, i've been in a terrible accident, and promise me you won't say a word.", "labels": ["DISTRESS_HOOK", "SECRECY"]}
-{"text": "this is the tax department.", "labels": ["AUTHORITY_IMPERSONATION"]}
-{"text": "Please, your order with ABC Insurance is confirmed and shipping today see you then.", "labels": []}
-{"text": "there's no time to lose, and wire the bail money over.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "this is ABC Insurance confirming your appointment for tomorrow, reply to reschedule no rush.", "labels": []}
-{"text": "Okay so this is customs and border protection and what's the one-time password you got.", "labels": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
-{"text": "Okay so hurry, we can't wait, and verify your date of birth, and send it through zelle to this number.", "labels": ["URGENCY", "IDENTITY_PROBE", "UNTRACEABLE_PAYMENT"]}
-{"text": "Listen, your order with Green Energy is confirmed and shipping today thanks.", "labels": []}
-{"text": "Hi, this is the library, the book you reserved is available for pickup let me know.", "labels": []}
-{"text": "Okay so this is Dr. Mehta's office confirming your appointment on Thursday at ten call me back when you can.", "labels": []}
-{"text": "Please, i'm calling from the irs, i'm in jail and i need help, keep me on the line.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK", "ISOLATION"]}
-{"text": "Okay so i'm in jail and i need help and please don't tell mom.", "labels": ["DISTRESS_HOOK", "SECRECY"]}
-{"text": "the deadline is today \u2014 stay on the line with me the whole time \u2014 tell me your card's cvv number.", "labels": ["URGENCY", "ISOLATION", "IDENTITY_PROBE"]}
-{"text": "Listen, hello? oh sorry, i must have dialed the wrong number thanks.", "labels": []}
-{"text": "this is the pharmacy, your prescription is ready to collect have a good day.", "labels": []}
-{"text": "Hey, stay on the line with me the whole time; put it on a steam card.", "labels": ["ISOLATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hey, it's the school office, your son left his lunchbox call me back when you can.", "labels": []}
-{"text": "Okay so western union the cash to me.", "labels": ["UNTRACEABLE_PAYMENT"]}
-{"text": "Listen, this is QuickShip Logistics confirming your appointment for tomorrow, reply to reschedule.", "labels": []}
-{"text": "Listen, it's your son calling \u2014 whatever you do, don't end this call.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION"]}
-{"text": "Please, this is your bank confirming the payment you made at the supermarket, no action needed love you.", "labels": []}
-{"text": "Listen, hurry, we can't wait.", "labels": ["URGENCY"]}
-{"text": "Listen, i'm in the hospital and it's bad and pay with apple gift cards.", "labels": ["DISTRESS_HOOK", "UNTRACEABLE_PAYMENT"]}
-{"text": "Listen, i'm hurt and i need you, and go to the store and get gift cards.", "labels": ["DISTRESS_HOOK", "UNTRACEABLE_PAYMENT"]}
-{"text": "Please, it's me, my voice sounds off because i have a cold \u2014 don't call anyone else \u2014 pay with apple gift cards.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hi, the bank app is showing your new card was delivered, activate it whenever let me know.", "labels": []}
-{"text": "Hi, it's the accountant, your tax return is filed and you're getting a refund call me back when you can.", "labels": []}
-{"text": "the kids say hi, we'll visit on Sunday afternoon talk soon.", "labels": []}
-{"text": "Hello? mom, it's me \u2014 this is customs and border protection.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION"]}
-{"text": "Hey, there's no time to lose; what's your account pin; don't tell anyone.", "labels": ["URGENCY", "IDENTITY_PROBE", "SECRECY"]}
-{"text": "Please, it's me, my voice sounds off because i have a cold; i'm with your bank's fraud team; i'm in serious trouble.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
-{"text": "Hello? this is Sunrise Bank confirming your appointment for tomorrow, reply to reschedule.", "labels": []}
-{"text": "it's your sister, dinner is at seven, bring the dessert you promised no rush.", "labels": []}
-{"text": "Listen, i've been in a terrible accident and do it this minute and send it through zelle to this number.", "labels": ["DISTRESS_HOOK", "URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hey, don't call anyone else, and send bitcoin to this wallet.", "labels": ["ISOLATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hi, we split the dinner bill evenly, I'll send you your share later have a good day.", "labels": []}
-{"text": "Hi, this is the clinic with your test results, everything looks normal talk soon.", "labels": []}
-{"text": "Hi, dad, don't you recognize my voice, and this is officer ramirez from the police, and go to the store and get gift cards.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hey, it's Sam from work, did you get the slides for the meeting thanks.", "labels": []}
-{"text": "Hi, this is Bright Telecom confirming your appointment for tomorrow, reply to reschedule.", "labels": []}
-{"text": "Hi, there is a warrant for your arrest, and send it by wire transfer.", "labels": ["AUTHORITY_IMPERSONATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Listen, i'm in jail and i need help, confirm your social security number for me, nobody else can know about this.", "labels": ["DISTRESS_HOOK", "IDENTITY_PROBE", "SECRECY"]}
-{"text": "mom transferred you some birthday money, it should show up tomorrow have a good day.", "labels": []}
-{"text": "Hi, hey it's Priya, are we still on for coffee this weekend have a good day.", "labels": []}
-{"text": "Hi, don't talk to anyone about this call. confirm your social security number for me. go to the store and get gift cards.", "labels": ["ISOLATION", "IDENTITY_PROBE", "UNTRACEABLE_PAYMENT"]}
-{"text": "mom, just calling to say I landed safely thanks.", "labels": []}
-{"text": "Hello? this is ABC Insurance confirming your appointment for tomorrow, reply to reschedule.", "labels": []}
-{"text": "Okay so it's your son calling; this is customs and border protection; i've been in a terrible accident.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
-{"text": "Hello? this is the pharmacy, your prescription is ready to collect see you then.", "labels": []}
-{"text": "Please, i'm with your bank's fraud team; keep me on the line; tell me your card's cvv number.", "labels": ["AUTHORITY_IMPERSONATION", "ISOLATION", "IDENTITY_PROBE"]}
-{"text": "Listen, this can't wait until tomorrow.", "labels": ["URGENCY"]}
-{"text": "Hello? hi, this is David from Green Energy, we have a special offer on your plan this month, no pressure.", "labels": []}
-{"text": "this is the clinic with your test results, everything looks normal see you then.", "labels": []}
-{"text": "Hey, this is officer ramirez from the police, mom i messed up really badly.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
-{"text": "Okay so the rent is due Friday, transfer it whenever suits you this week let me know.", "labels": []}
-{"text": "it's me, just wanted to hear your voice, how are you doing love you.", "labels": []}
-{"text": "Okay so i'm in the hospital and it's bad.", "labels": ["DISTRESS_HOOK"]}
-{"text": "Hi, it's the vet, your dog's vaccination is due next week call me back when you can.", "labels": []}
-{"text": "Okay so i'm with your bank's fraud team. give me the verification code.", "labels": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
-{"text": "Okay so your order with QuickShip Logistics is confirmed and shipping today call me back when you can.", "labels": []}
-{"text": "dad, don't you recognize my voice, and i've been in a terrible accident.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK"]}
-{"text": "Okay so do it this minute and what's your account pin and send bitcoin to this wallet.", "labels": ["URGENCY", "IDENTITY_PROBE", "UNTRACEABLE_PAYMENT"]}
-{"text": "Please, dad, don't you recognize my voice; don't put me on hold; confirm your social security number for me.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION", "IDENTITY_PROBE"]}
-{"text": "Hello? grandma it's me, your grandson, this is the tax department, i'm in jail and i need help.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
-{"text": "Okay so it's the school office, your son left his lunchbox talk soon.", "labels": []}
-{"text": "i need bail or they keep me locked up and don't talk to anyone about this call and western union the cash to me.", "labels": ["DISTRESS_HOOK", "ISOLATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hello? hi grandpa it's your granddaughter.", "labels": ["RELATIONSHIP_SPOOF"]}
-{"text": "Okay so this is Star Mobile, your service visit is scheduled for Tuesday morning thanks.", "labels": []}
-{"text": "Okay so you have to act fast.", "labels": ["URGENCY"]}
-{"text": "Hey, dad, don't you recognize my voice \u2014 i'm a federal agent.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION"]}
-{"text": "Please, immediately, tell me your card's cvv number, this has to stay secret.", "labels": ["URGENCY", "IDENTITY_PROBE", "SECRECY"]}
-{"text": "Hey, this is Sunrise Bank customer support following up on your ticket, no action needed love you.", "labels": []}
-{"text": "don't hang up the phone; load the money onto a prepaid card.", "labels": ["ISOLATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Okay so this can't wait until tomorrow \u2014 don't tell anyone.", "labels": ["URGENCY", "SECRECY"]}
-{"text": "Hello? is this the Maria residence? oh, my apologies, wrong number talk soon.", "labels": []}
-{"text": "Listen, is this the Sam residence? oh, my apologies, wrong number call me back when you can.", "labels": []}
-{"text": "Hello? sorry, i think i have the wrong number call me back when you can.", "labels": []}
-{"text": "Okay so i need bail or they keep me locked up. nobody else can know about this.", "labels": ["DISTRESS_HOOK", "SECRECY"]}
-{"text": "Hey, before it's too late. pay with apple gift cards. this has to stay secret.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT", "SECRECY"]}
-{"text": "Okay so this is City Auto Repair customer support following up on your ticket, no action needed talk soon.", "labels": []}
-{"text": "Hi, dad, don't you recognize my voice, buy some google play gift cards and read me the codes.", "labels": ["RELATIONSHIP_SPOOF", "UNTRACEABLE_PAYMENT"]}
-{"text": "Okay so confirming the table for four under your name for Saturday see you then.", "labels": []}
-{"text": "Okay so hello? oh sorry, i must have dialed the wrong number let me know.", "labels": []}
-{"text": "it's the vet, your dog's vaccination is due next week let me know.", "labels": []}
-{"text": "Hi, dad, don't you recognize my voice and i'm in the hospital and it's bad.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK"]}
-{"text": "the kids say hi, we'll visit on Sunday afternoon call me back when you can.", "labels": []}
-{"text": "Listen, hurry, we can't wait; keep me on the line; send it by wire transfer.", "labels": ["URGENCY", "ISOLATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Please, i'm with your bank's fraud team and i'm in serious trouble and confirm your social security number for me.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK", "IDENTITY_PROBE"]}
-{"text": "Listen, mom transferred you some birthday money, it should show up tomorrow see you then.", "labels": []}
-{"text": "Please, the movie starts at eight so let's meet at seven thirty love you.", "labels": []}
-{"text": "Listen, it's me, my voice sounds off because i have a cold.", "labels": ["RELATIONSHIP_SPOOF"]}
-{"text": "Hi, there's no time to lose. wire the bail money over.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "Okay so this is City Auto Repair customer support following up on your ticket, no action needed.", "labels": []}
-{"text": "Hey, this is City Auto Repair confirming your appointment for tomorrow, reply to reschedule let me know.", "labels": []}
-{"text": "Hey, hurry, we can't wait \u2014 don't mention this to the family.", "labels": ["URGENCY", "SECRECY"]}
-{"text": "Hello? don't tell anyone.", "labels": ["SECRECY"]}
-{"text": "Listen, this is Sunrise Bank, you're eligible for a loyalty discount, want me to email the details love you.", "labels": []}
-{"text": "Okay so i'm returning your call about the plumbing quote for the kitchen.", "labels": []}
-{"text": "Hey, i'm calling from MediCare Clinic about renewing your policy, call back whenever suits you call me back when you can.", "labels": []}
-{"text": "Okay so calling from the garage, your car is ready and passed inspection.", "labels": []}
-{"text": "Please, it's Sam from work, did you get the slides for the meeting have a good day.", "labels": []}
-{"text": "Listen, the rent is due Friday, transfer it whenever suits you this week have a good day.", "labels": []}
-{"text": "i need bail or they keep me locked up, and right now, and what's the one-time password you got.", "labels": ["DISTRESS_HOOK", "URGENCY", "IDENTITY_PROBE"]}
-{"text": "Hi, is this the Priya residence? oh, my apologies, wrong number.", "labels": []}
-{"text": "Please, hi grandpa it's your granddaughter. verify your date of birth.", "labels": ["RELATIONSHIP_SPOOF", "IDENTITY_PROBE"]}
-{"text": "i'm in jail and i need help; go to the store and get gift cards.", "labels": ["DISTRESS_HOOK", "UNTRACEABLE_PAYMENT"]}
-{"text": "Please, this is Green Energy, you're eligible for a loyalty discount, want me to email the details thanks.", "labels": []}
-{"text": "i'm a federal agent \u2014 confirm your social security number for me.", "labels": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
-{"text": "Listen, i was trying to reach John, sorry to bother you, have a good day no rush.", "labels": []}
-{"text": "Hey, i'm in the hospital and it's bad \u2014 do it this minute \u2014 put it on a steam card.", "labels": ["DISTRESS_HOOK", "URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "Okay so Karen here from Green Energy, just following up on the quote we sent you love you.", "labels": []}
-{"text": "Hello? dad, don't you recognize my voice, and hurry, we can't wait, and verify your date of birth.", "labels": ["RELATIONSHIP_SPOOF", "URGENCY", "IDENTITY_PROBE"]}
-{"text": "Hey, reminder from the dentist, your cleaning is tomorrow morning call me back when you can.", "labels": []}
-{"text": "Listen, this is the pharmacy, your prescription is ready to collect thanks.", "labels": []}
-{"text": "Please, this is the tax department, i'm in jail and i need help, tell me your card's cvv number.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK", "IDENTITY_PROBE"]}
-{"text": "Hi, put it on a steam card, and promise me you won't say a word.", "labels": ["UNTRACEABLE_PAYMENT", "SECRECY"]}
-{"text": "Listen, within the next hour, don't talk to anyone about this call, don't mention this to the family.", "labels": ["URGENCY", "ISOLATION", "SECRECY"]}
-{"text": "Hey, this is the library, the book you reserved is available for pickup have a good day.", "labels": []}
-{"text": "Please, your salary has been deposited, just letting you know it cleared have a good day.", "labels": []}
-{"text": "Listen, is this the Anita residence? oh, my apologies, wrong number see you then.", "labels": []}
-{"text": "Hey, i'm hurt and i need you, and wire the bail money over.", "labels": ["DISTRESS_HOOK", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hi, i'm calling from the irs, whatever you do, don't end this call.", "labels": ["AUTHORITY_IMPERSONATION", "ISOLATION"]}
-{"text": "Listen, mom transferred you some birthday money, it should show up tomorrow talk soon.", "labels": []}
-{"text": "Hello? there is a warrant for your arrest. put it on a steam card.", "labels": ["AUTHORITY_IMPERSONATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hello? i've been in a terrible accident.", "labels": ["DISTRESS_HOOK"]}
-{"text": "Hello? i'm calling from ABC Insurance about renewing your policy, call back whenever suits you.", "labels": []}
-{"text": "Listen, we split the dinner bill evenly, I'll send you your share later love you.", "labels": []}
-{"text": "Okay so i'm calling from Bright Telecom about renewing your policy, call back whenever suits you thanks.", "labels": []}
-{"text": "Hi, hello? oh sorry, i must have dialed the wrong number thanks.", "labels": []}
-{"text": "Hi, tell me your card's cvv number. wire the bail money over. this has to stay secret.", "labels": ["IDENTITY_PROBE", "UNTRACEABLE_PAYMENT", "SECRECY"]}
-{"text": "Please, sorry, i think i have the wrong number see you then.", "labels": []}
-{"text": "i'm calling from the irs, i'm in serious trouble, don't talk to anyone about this call.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK", "ISOLATION"]}
-{"text": "Hello? just confirming your reservation for four people on Saturday, see you then no rush.", "labels": []}
-{"text": "Okay so just confirming your reservation for four people on Saturday, see you then.", "labels": []}
-{"text": "Please, this can't wait until tomorrow, and what's your account pin.", "labels": ["URGENCY", "IDENTITY_PROBE"]}
-{"text": "Please, hi grandma, just checking in, how was your walk today no rush.", "labels": []}
-{"text": "mom transferred you some birthday money, it should show up tomorrow talk soon.", "labels": []}
-{"text": "Please, i'm with your bank's fraud team, don't call anyone else, what's your account pin.", "labels": ["AUTHORITY_IMPERSONATION", "ISOLATION", "IDENTITY_PROBE"]}
-{"text": "Okay so this is Bright Telecom customer support following up on your ticket, no action needed call me back when you can.", "labels": []}
-{"text": "Please, i paid you back for lunch over the usual app, check when you get a sec call me back when you can.", "labels": []}
-{"text": "Hello? this is your neighbour, your parcel was delivered to my door love you.", "labels": []}
-{"text": "Hey, within the next hour, and go to the store and get gift cards.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hey, this is Star Mobile customer support following up on your ticket, no action needed talk soon.", "labels": []}
-{"text": "Hey, grandma it's me, your grandson; put it on a steam card.", "labels": ["RELATIONSHIP_SPOOF", "UNTRACEABLE_PAYMENT"]}
-{"text": "Listen, hey, can you pick up milk on your way home tonight see you then.", "labels": []}
-{"text": "Listen, the electricity bill came, it's the normal amount, I'll handle it have a good day.", "labels": []}
-{"text": "Hello? send it by wire transfer.", "labels": ["UNTRACEABLE_PAYMENT"]}
-{"text": "Listen, grandma it's me, your grandson, before it's too late, read me the code i just texted you.", "labels": ["RELATIONSHIP_SPOOF", "URGENCY", "IDENTITY_PROBE"]}
-{"text": "Hey, there is a warrant for your arrest and i'm in serious trouble and stay on the line with me the whole time.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK", "ISOLATION"]}
-{"text": "Please, this is Star Mobile, you're eligible for a loyalty discount, want me to email the details.", "labels": []}
-{"text": "the bank app is showing your new card was delivered, activate it whenever thanks.", "labels": []}
-{"text": "Okay so there's no time to lose.", "labels": ["URGENCY"]}
-{"text": "Okay so calling from the dental office to confirm your booking, nothing needed from you no rush.", "labels": []}
-{"text": "Hello? hi grandma, just checking in, how was your walk today call me back when you can.", "labels": []}
-{"text": "Hello? it's me, my voice sounds off because i have a cold. i'm with your bank's fraud team.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION"]}
-{"text": "Hey, mom, it's me, and tell me your card's cvv number, and please don't tell mom.", "labels": ["RELATIONSHIP_SPOOF", "IDENTITY_PROBE", "SECRECY"]}
-{"text": "Hi, it's the school office, your son left his lunchbox call me back when you can.", "labels": []}
-{"text": "Please, pay with apple gift cards.", "labels": ["UNTRACEABLE_PAYMENT"]}
-{"text": "Hi, i'm calling from the irs.", "labels": ["AUTHORITY_IMPERSONATION"]}
-{"text": "Hey, hi, this is David from City Auto Repair, we have a special offer on your plan this month, no pressure love you.", "labels": []}
-{"text": "Hey, it's Sam from work, did you get the slides for the meeting have a good day.", "labels": []}
-{"text": "Hello? sorry, i think i have the wrong number see you then.", "labels": []}
-{"text": "Please, verify your date of birth.", "labels": ["IDENTITY_PROBE"]}
-{"text": "Listen, just confirming your reservation for four people on Saturday, see you then have a good day.", "labels": []}
-{"text": "Okay so the electricity bill came, it's the normal amount, I'll handle it see you then.", "labels": []}
-{"text": "Hello? dad, don't you recognize my voice, pay with apple gift cards, this has to stay secret.", "labels": ["RELATIONSHIP_SPOOF", "UNTRACEABLE_PAYMENT", "SECRECY"]}
-{"text": "Hey, hi, this is John from MediCare Clinic, we have a special offer on your plan this month, no pressure see you then.", "labels": []}
-{"text": "Hello? there is a warrant for your arrest, and i'm hurt and i need you.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
-{"text": "Hello? mom i messed up really badly.", "labels": ["DISTRESS_HOOK"]}
-{"text": "Hello? this is Sunrise Bank, your service visit is scheduled for Tuesday morning see you then.", "labels": []}
-{"text": "Listen, dad, don't you recognize my voice. don't talk to anyone about this call.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION"]}
-{"text": "Hello? immediately. stay on the line with me the whole time. don't mention this to the family.", "labels": ["URGENCY", "ISOLATION", "SECRECY"]}
-{"text": "Please, i need bail or they keep me locked up, and whatever you do, don't end this call.", "labels": ["DISTRESS_HOOK", "ISOLATION"]}
-{"text": "Hi, hey it's Priya, are we still on for coffee this weekend love you.", "labels": []}
-{"text": "Listen, it's your son calling \u2014 the deadline is today.", "labels": ["RELATIONSHIP_SPOOF", "URGENCY"]}
-{"text": "Okay so this is the library, the book you reserved is available for pickup have a good day.", "labels": []}
-{"text": "Please, grandma it's me, your grandson. i'm in jail and i need help. nobody else can know about this.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK", "SECRECY"]}
-{"text": "Listen, keep me on the line.", "labels": ["ISOLATION"]}
-{"text": "Listen, do it this minute, western union the cash to me.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "Okay so this is customs and border protection \u2014 give me the verification code.", "labels": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
-{"text": "Hey, this is MediCare Clinic confirming your appointment for tomorrow, reply to reschedule thanks.", "labels": []}
-{"text": "Hi, i'm in the hospital and it's bad; what's the one-time password you got; send it by wire transfer.", "labels": ["DISTRESS_HOOK", "IDENTITY_PROBE", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hi, i was trying to reach Priya, sorry to bother you, have a good day thanks.", "labels": []}
-{"text": "Please, this is ABC Insurance, your service visit is scheduled for Tuesday morning.", "labels": []}
-{"text": "Please, i'm in serious trouble; immediately; read me the code i just texted you.", "labels": ["DISTRESS_HOOK", "URGENCY", "IDENTITY_PROBE"]}
-{"text": "hey, can you pick up milk on your way home tonight thanks.", "labels": []}
-{"text": "Okay so before it's too late. send it through zelle to this number.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT"]}
-{"text": "Okay so this is your internet provider confirming your appointment for tomorrow, reply to reschedule call me back when you can.", "labels": []}
-{"text": "Hello? this is your internet provider customer support following up on your ticket, no action needed see you then.", "labels": []}
-{"text": "Okay so this is customs and border protection.", "labels": ["AUTHORITY_IMPERSONATION"]}
-{"text": "Please, grandma it's me, your grandson, and there's no time to lose.", "labels": ["RELATIONSHIP_SPOOF", "URGENCY"]}
-{"text": "Listen, is this the David residence? oh, my apologies, wrong number call me back when you can.", "labels": []}
-{"text": "Hi, i'm calling from ABC Insurance about renewing your policy, call back whenever suits you talk soon.", "labels": []}
-{"text": "Hello? don't put me on hold \u2014 don't mention this to the family.", "labels": ["ISOLATION", "SECRECY"]}
-{"text": "Okay so the electricity bill came, it's the normal amount, I'll handle it have a good day.", "labels": []}
-{"text": "Hi, the rent is due Friday, transfer it whenever suits you this week love you.", "labels": []}
-{"text": "i'm in serious trouble.", "labels": ["DISTRESS_HOOK"]}
-{"text": "Okay so this is officer ramirez from the police, transfer the crypto now.", "labels": ["AUTHORITY_IMPERSONATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hi, calling from ABC Insurance to confirm your booking, nothing needed from you no rush.", "labels": []}
-{"text": "Listen, calling about the job interview, are you free Tuesday morning see you then.", "labels": []}
-{"text": "Hey, i need bail or they keep me locked up; don't talk to anyone about this call; what's the one-time password you got.", "labels": ["DISTRESS_HOOK", "ISOLATION", "IDENTITY_PROBE"]}
-{"text": "Listen, grandma it's me, your grandson and i'm in the hospital and it's bad and send bitcoin to this wallet.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hello? grandma it's me, your grandson \u2014 i'm in serious trouble.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK"]}
-{"text": "your salary has been deposited, just letting you know it cleared talk soon.", "labels": []}
-{"text": "Okay so there's no time to lose and whatever you do, don't end this call.", "labels": ["URGENCY", "ISOLATION"]}
-{"text": "Please, do it this minute, and please don't tell mom.", "labels": ["URGENCY", "SECRECY"]}
-{"text": "Please, this is the dental office confirming your appointment for tomorrow, reply to reschedule talk soon.", "labels": []}
-{"text": "Hello? your salary has been deposited, just letting you know it cleared talk soon.", "labels": []}
-{"text": "Hi, David here from QuickShip Logistics, just following up on the quote we sent you call me back when you can.", "labels": []}
-{"text": "this is the dental office, your service visit is scheduled for Tuesday morning love you.", "labels": []}
-{"text": "is this the Anita residence? oh, my apologies, wrong number love you.", "labels": []}
-{"text": "Okay so the bank app is showing your new card was delivered, activate it whenever talk soon.", "labels": []}
-{"text": "Hey, please don't tell mom.", "labels": ["SECRECY"]}
-{"text": "hi grandpa it's your granddaughter; mom i messed up really badly.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK"]}
-{"text": "this is Dr. Mehta's office confirming your appointment on Thursday at ten.", "labels": []}
-{"text": "Listen, dad, don't you recognize my voice, and don't call anyone else, and put it on a steam card.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION", "UNTRACEABLE_PAYMENT"]}
-{"text": "Hi, this is the pharmacy, your prescription is ready to collect talk soon.", "labels": []}
+{"text": "Okay so this is the library, the book you reserved is available for pickup thanks.", "labels": []}
+{"text": "Listen, dad, don't you recognize my voice. don't talk to anyone about this call. confirm your social security number for me.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION", "IDENTITY_PROBE"]}
+{"text": "Okay so it's me, just wanted to hear your voice, how are you doing.", "labels": []}
+{"text": "Okay so sorry, i think i have the wrong number thanks.", "labels": []}
+{"text": "Hello? your package is out for delivery and should arrive between two and four see you then.", "labels": []}
+{"text": "Hey, your package is out for delivery and should arrive between two and four let me know.", "labels": []}
+{"text": "Hello? hi, this is Priya from your internet provider, we have a special offer on your plan this month, no pressure no rush.", "labels": []}
+{"text": "transfer the funds to a safe account for verification.", "labels": ["UNTRACEABLE_PAYMENT"]}
+{"text": "Hi, stay on the line with me the whole time.", "labels": ["ISOLATION"]}
+{"text": "Please, calling from the dental office to confirm your booking, nothing needed from you talk soon.", "labels": []}
+{"text": "Hi, i'm in serious trouble and before it's too late and nobody else can know about this.", "labels": ["DISTRESS_HOOK", "URGENCY", "SECRECY"]}
+{"text": "Okay so this is the library, the book you reserved is available for pickup call me back when you can.", "labels": []}
+{"text": "Hello? sorry, i think i have the wrong number no rush.", "labels": []}
+{"text": "Hello? calling from Star Mobile to confirm your booking, nothing needed from you thanks.", "labels": []}
+{"text": "Hello? this is City Auto Repair customer support following up on your ticket, no action needed thanks.", "labels": []}
+{"text": "Hello? keep your camera on at all times until the case is closed, and go to the store and get gift cards.", "labels": ["ISOLATION", "UNTRACEABLE_PAYMENT"]}
+{"text": "Please, dad, don't you recognize my voice. i'm in the hospital and it's bad. do it this minute.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK", "URGENCY"]}
+{"text": "Please, i'm a federal agent. the deadline is today. you cannot tell your family, this is a confidential investigation.", "labels": ["AUTHORITY_IMPERSONATION", "URGENCY", "ISOLATION"]}
 {"text": "Listen, sorry, i think i have the wrong number no rush.", "labels": []}
-{"text": "Please, it's the accountant, your tax return is filed and you're getting a refund.", "labels": []}
-{"text": "Please, this is the social security administration.", "labels": ["AUTHORITY_IMPERSONATION"]}
-{"text": "Okay so Maria here from the dental office, just following up on the quote we sent you call me back when you can.", "labels": []}
-{"text": "Please, i'm a federal agent, i'm in the hospital and it's bad, hurry, we can't wait.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK", "URGENCY"]}
-{"text": "you have to act fast.", "labels": ["URGENCY"]}
-{"text": "Hi, dad, don't you recognize my voice, don't hang up the phone.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION"]}
-{"text": "Listen, this is customs and border protection \u2014 stay on the line with me the whole time \u2014 don't tell anyone.", "labels": ["AUTHORITY_IMPERSONATION", "ISOLATION", "SECRECY"]}
-{"text": "Hey, they've taken me and i'm scared, and this can't wait until tomorrow.", "labels": ["DISTRESS_HOOK", "URGENCY"]}
-{"text": "Please, this is the clinic with your test results, everything looks normal let me know.", "labels": []}
+{"text": "Hi, mom, it's me \u2014 they've taken me and i'm scared.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK"]}
+{"text": "Please, you are under digital arrest and must cooperate and before it's too late and read me the code i just texted you.", "labels": ["AUTHORITY_IMPERSONATION", "URGENCY", "IDENTITY_PROBE"]}
+{"text": "this is Dr. Mehta's office confirming your appointment on Thursday at ten.", "labels": []}
+{"text": "Listen, hurry, we can't wait.", "labels": ["URGENCY"]}
+{"text": "Hi, your package is out for delivery and should arrive between two and four thanks.", "labels": []}
+{"text": "Hey, stay on this video call for the next few days and what's the one-time password you got.", "labels": ["ISOLATION", "IDENTITY_PROBE"]}
+{"text": "Hello? it's your son calling \u2014 mom i messed up really badly.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK"]}
+{"text": "mom i messed up really badly; verify your date of birth; don't tell anyone.", "labels": ["DISTRESS_HOOK", "IDENTITY_PROBE", "SECRECY"]}
+{"text": "Okay so there's no time to lose.", "labels": ["URGENCY"]}
+{"text": "i moved the deposit to our joint account like we agreed earlier see you then.", "labels": []}
+{"text": "Hi, confirm your social security number for me.", "labels": ["IDENTITY_PROBE"]}
+{"text": "Listen, hi grandpa it's your granddaughter. read me the code i just texted you.", "labels": ["RELATIONSHIP_SPOOF", "IDENTITY_PROBE"]}
+{"text": "Okay so mom, just calling to say I landed safely let me know.", "labels": []}
+{"text": "Okay so the electricity bill came, it's the normal amount, I'll handle it let me know.", "labels": []}
+{"text": "Okay so dad, don't you recognize my voice; i'm in the hospital and it's bad.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK"]}
+{"text": "Please, grandma it's me, your grandson \u2014 right now.", "labels": ["RELATIONSHIP_SPOOF", "URGENCY"]}
+{"text": "hi grandma, just checking in, how was your walk today let me know.", "labels": []}
+{"text": "Please, this is the pharmacy, your prescription is ready to collect have a good day.", "labels": []}
+{"text": "Okay so sorry, i think i have the wrong number have a good day.", "labels": []}
+{"text": "Hey, your order with Bright Telecom is confirmed and shipping today thanks.", "labels": []}
+{"text": "Hi, i'm in jail and i need help, and whatever you do, don't end this call.", "labels": ["DISTRESS_HOOK", "ISOLATION"]}
+{"text": "mom, it's me and your sim card is linked to a criminal investigation.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION"]}
+{"text": "Please, this is ABC Insurance, your service visit is scheduled for Tuesday morning.", "labels": []}
+{"text": "Hey, i'm in the hospital and it's bad and confirm your social security number for me.", "labels": ["DISTRESS_HOOK", "IDENTITY_PROBE"]}
+{"text": "Hey, the movie starts at eight so let's meet at seven thirty no rush.", "labels": []}
+{"text": "Listen, grandma it's me, your grandson.", "labels": ["RELATIONSHIP_SPOOF"]}
+{"text": "confirming the table for four under your name for Saturday no rush.", "labels": []}
+{"text": "Hi, within the next hour, and do not disconnect or leave the room, and verify your date of birth.", "labels": ["URGENCY", "ISOLATION", "IDENTITY_PROBE"]}
+{"text": "it's me, my voice sounds off because i have a cold, i've been in a terrible accident.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK"]}
+{"text": "Listen, it's the school office, your son left his lunchbox see you then.", "labels": []}
+{"text": "grandma it's me, your grandson.", "labels": ["RELATIONSHIP_SPOOF"]}
+{"text": "Okay so this is MediCare Clinic customer support following up on your ticket, no action needed let me know.", "labels": []}
+{"text": "Hi, i'm in serious trouble. within the next hour. do not disconnect or leave the room.", "labels": ["DISTRESS_HOOK", "URGENCY", "ISOLATION"]}
+{"text": "Hey, your insurance renewal is coming up next month, no hurry to decide have a good day.", "labels": []}
+{"text": "Hey, it's your sister, dinner is at seven, bring the dessert you promised no rush.", "labels": []}
+{"text": "Okay so i'm returning your call about the plumbing quote for the kitchen love you.", "labels": []}
+{"text": "Hi, they've taken me and i'm scared.", "labels": ["DISTRESS_HOOK"]}
+{"text": "Please, don't hang up the phone, put your savings into this opportunity and double your money.", "labels": ["ISOLATION", "UNTRACEABLE_PAYMENT"]}
+{"text": "this is customs and border protection. i'm in serious trouble.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
+{"text": "Listen, reminder from the dentist, your cleaning is tomorrow morning talk soon.", "labels": []}
+{"text": "Hello? is this the Karen residence? oh, my apologies, wrong number thanks.", "labels": []}
+{"text": "Hi, do it this minute.", "labels": ["URGENCY"]}
+{"text": "Please, sorry, i think i have the wrong number let me know.", "labels": []}
+{"text": "Hey, grandma it's me, your grandson \u2014 i need bail or they keep me locked up \u2014 don't talk to anyone about this call.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK", "ISOLATION"]}
+{"text": "Okay so hi, this is John from Sunrise Bank, we have a special offer on your plan this month, no pressure.", "labels": []}
+{"text": "Hey, i've been in a terrible accident and don't mention this to the family.", "labels": ["DISTRESS_HOOK", "SECRECY"]}
+{"text": "Listen, you have to act fast, confirm your social security number for me, buy some google play gift cards and read me the codes.", "labels": ["URGENCY", "IDENTITY_PROBE", "UNTRACEABLE_PAYMENT"]}
+{"text": "Hello? confirm your social security number for me, and put it on a steam card, and promise me you won't say a word.", "labels": ["IDENTITY_PROBE", "UNTRACEABLE_PAYMENT", "SECRECY"]}
+{"text": "Hi, it's me, my voice sounds off because i have a cold, and what's your account pin, and nobody else can know about this.", "labels": ["RELATIONSHIP_SPOOF", "IDENTITY_PROBE", "SECRECY"]}
+{"text": "Hey, it's the school office, your son left his lunchbox call me back when you can.", "labels": []}
+{"text": "Hello? there is a warrant for your arrest, read me the code i just texted you.", "labels": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
+{"text": "Listen, i'm with your bank's fraud team. i'm in the hospital and it's bad.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
+{"text": "Hi, it's Sam from work, did you get the slides for the meeting let me know.", "labels": []}
+{"text": "Hello? wire the bail money over.", "labels": ["UNTRACEABLE_PAYMENT"]}
+{"text": "Okay so it's your son calling and give me the verification code.", "labels": ["RELATIONSHIP_SPOOF", "IDENTITY_PROBE"]}
+{"text": "Please, hi grandpa it's your granddaughter, don't call anyone else, verify your date of birth.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION", "IDENTITY_PROBE"]}
+{"text": "Please, don't hang up the phone.", "labels": ["ISOLATION"]}
+{"text": "Listen, your insurance renewal is coming up next month, no hurry to decide have a good day.", "labels": []}
+{"text": "Listen, i'm calling from your internet provider about renewing your policy, call back whenever suits you talk soon.", "labels": []}
+{"text": "Please, this is the pharmacy, your prescription is ready to collect see you then.", "labels": []}
+{"text": "Please, i moved the deposit to our joint account like we agreed earlier see you then.", "labels": []}
+{"text": "Please, this is customs and border protection.", "labels": ["AUTHORITY_IMPERSONATION"]}
+{"text": "Hello? your order with Sunrise Bank is confirmed and shipping today no rush.", "labels": []}
+{"text": "Hello? this is the social security administration, and i'm in the hospital and it's bad, and immediately.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK", "URGENCY"]}
+{"text": "Hey, is this the David residence? oh, my apologies, wrong number let me know.", "labels": []}
+{"text": "Hi, don't tell anyone.", "labels": ["SECRECY"]}
+{"text": "Listen, calling about the job interview, are you free Tuesday morning let me know.", "labels": []}
+{"text": "Okay so don't call anyone else and send it by wire transfer and nobody else can know about this.", "labels": ["ISOLATION", "UNTRACEABLE_PAYMENT", "SECRECY"]}
+{"text": "Hey, i paid you back for lunch over the usual app, check when you get a sec let me know.", "labels": []}
+{"text": "Hello? hurry, we can't wait.", "labels": ["URGENCY"]}
+{"text": "Please, this is the narcotics control bureau, a case has been filed against you.", "labels": ["AUTHORITY_IMPERSONATION"]}
+{"text": "Hello? hello? oh sorry, i must have dialed the wrong number let me know.", "labels": []}
+{"text": "Hi, your order with your internet provider is confirmed and shipping today talk soon.", "labels": []}
+{"text": "Okay so i'm calling from the irs and within the next hour.", "labels": ["AUTHORITY_IMPERSONATION", "URGENCY"]}
+{"text": "Please, sorry, i think i have the wrong number no rush.", "labels": []}
+{"text": "Hey, i'm hurt and i need you. you have to act fast.", "labels": ["DISTRESS_HOOK", "URGENCY"]}
+{"text": "Hi, mom, just calling to say I landed safely have a good day.", "labels": []}
+{"text": "Please, mom i messed up really badly.", "labels": ["DISTRESS_HOOK"]}
+{"text": "is this the Anita residence? oh, my apologies, wrong number talk soon.", "labels": []}
+{"text": "Okay so move your savings to a secure rbi account while we investigate; keep this between us.", "labels": ["UNTRACEABLE_PAYMENT", "SECRECY"]}
+{"text": "Hey, this is your internet provider confirming your appointment for tomorrow, reply to reschedule call me back when you can.", "labels": []}
+{"text": "Listen, i'm returning your call about the plumbing quote for the kitchen have a good day.", "labels": []}
+{"text": "Hi, calling about the job interview, are you free Tuesday morning thanks.", "labels": []}
+{"text": "Listen, your sim card is linked to a criminal investigation \u2014 do it this minute \u2014 don't talk to anyone about this call.", "labels": ["AUTHORITY_IMPERSONATION", "URGENCY", "ISOLATION"]}
+{"text": "Hi, calling from the gas company to confirm your booking, nothing needed from you thanks.", "labels": []}
+{"text": "Hey, stay on this video call for the next few days \u2014 put it on a steam card.", "labels": ["ISOLATION", "UNTRACEABLE_PAYMENT"]}
+{"text": "Hi, i'm hurt and i need you; do not disconnect or leave the room.", "labels": ["DISTRESS_HOOK", "ISOLATION"]}
+{"text": "Hello? dad, don't you recognize my voice, and whatever you do, don't end this call.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION"]}
+{"text": "Listen, a money laundering case has been registered against your aadhaar. stay on the line with me the whole time. don't mention this to the family.", "labels": ["AUTHORITY_IMPERSONATION", "ISOLATION", "SECRECY"]}
+{"text": "Hello? this is the social security administration; please don't tell mom.", "labels": ["AUTHORITY_IMPERSONATION", "SECRECY"]}
+{"text": "Please, i paid you back for lunch over the usual app, check when you get a sec see you then.", "labels": []}
+{"text": "Hi, you are under digital arrest and must cooperate and you have to act fast and transfer the crypto now.", "labels": ["AUTHORITY_IMPERSONATION", "URGENCY", "UNTRACEABLE_PAYMENT"]}
+{"text": "Listen, this is the cbi cyber crime branch and do not disconnect or leave the room and nobody else can know about this.", "labels": ["AUTHORITY_IMPERSONATION", "ISOLATION", "SECRECY"]}
+{"text": "Okay so hey, can you pick up milk on your way home tonight let me know.", "labels": []}
+{"text": "Listen, dad, don't you recognize my voice, this is officer ramirez from the police.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION"]}
+{"text": "Hey, calling about the job interview, are you free Tuesday morning no rush.", "labels": []}
+{"text": "Please, your order with Green Energy is confirmed and shipping today let me know.", "labels": []}
+{"text": "Listen, this is Bright Telecom, your service visit is scheduled for Tuesday morning thanks.", "labels": []}
+{"text": "Hello? i'm calling from MediCare Clinic about renewing your policy, call back whenever suits you talk soon.", "labels": []}
+{"text": "Hey, immediately.", "labels": ["URGENCY"]}
+{"text": "Hey, is this the Maria residence? oh, my apologies, wrong number call me back when you can.", "labels": []}
+{"text": "Hello? i'm hurt and i need you, and promise me you won't say a word.", "labels": ["DISTRESS_HOOK", "SECRECY"]}
+{"text": "Listen, hey, can you pick up milk on your way home tonight see you then.", "labels": []}
+{"text": "Please, within the next hour \u2014 do not disconnect or leave the room \u2014 what's the one-time password you got.", "labels": ["URGENCY", "ISOLATION", "IDENTITY_PROBE"]}
+{"text": "it's me, my voice sounds off because i have a cold.", "labels": ["RELATIONSHIP_SPOOF"]}
+{"text": "Hi, mom, it's me, verify your date of birth, send the amount to this government account for safekeeping.", "labels": ["RELATIONSHIP_SPOOF", "IDENTITY_PROBE", "UNTRACEABLE_PAYMENT"]}
+{"text": "Hey, you are under digital arrest and must cooperate \u2014 i'm in serious trouble.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
+{"text": "Okay so your insurance renewal is coming up next month, no hurry to decide have a good day.", "labels": []}
+{"text": "Hey, tell me your card's cvv number; move your savings to a secure rbi account while we investigate.", "labels": ["IDENTITY_PROBE", "UNTRACEABLE_PAYMENT"]}
+{"text": "Hello? your salary has been deposited, just letting you know it cleared love you.", "labels": []}
+{"text": "within the next hour.", "labels": ["URGENCY"]}
+{"text": "Hey, this is the library, the book you reserved is available for pickup let me know.", "labels": []}
+{"text": "Okay so mom, it's me and immediately and verify your date of birth.", "labels": ["RELATIONSHIP_SPOOF", "URGENCY", "IDENTITY_PROBE"]}
+{"text": "Hello? it's your sister, dinner is at seven, bring the dessert you promised see you then.", "labels": []}
+{"text": "Hey, hello? oh sorry, i must have dialed the wrong number no rush.", "labels": []}
+{"text": "Hello? wire the bail money over. don't tell anyone.", "labels": ["UNTRACEABLE_PAYMENT", "SECRECY"]}
+{"text": "Please, this is your neighbour, your parcel was delivered to my door thanks.", "labels": []}
+{"text": "Hello? this is Star Mobile confirming your appointment for tomorrow, reply to reschedule have a good day.", "labels": []}
+{"text": "Hey, hey, can you pick up milk on your way home tonight let me know.", "labels": []}
+{"text": "Hi, transfer the crypto now.", "labels": ["UNTRACEABLE_PAYMENT"]}
+{"text": "Hey, just confirming your reservation for four people on Saturday, see you then have a good day.", "labels": []}
+{"text": "Hello? this is customs and border protection.", "labels": ["AUTHORITY_IMPERSONATION"]}
+{"text": "Hi, just confirming your reservation for four people on Saturday, see you then no rush.", "labels": []}
+{"text": "Hi, i'm calling from the gas company about renewing your policy, call back whenever suits you no rush.", "labels": []}
+{"text": "Hey, stay on the line with me the whole time and confirm your social security number for me and nobody else can know about this.", "labels": ["ISOLATION", "IDENTITY_PROBE", "SECRECY"]}
+{"text": "this is Bright Telecom, you're eligible for a loyalty discount, want me to email the details call me back when you can.", "labels": []}
+{"text": "Okay so i was trying to reach Anita, sorry to bother you, have a good day no rush.", "labels": []}
+{"text": "Hello? hi grandpa it's your granddaughter; deposit the money in this verification account to clear your name; promise me you won't say a word.", "labels": ["RELATIONSHIP_SPOOF", "UNTRACEABLE_PAYMENT", "SECRECY"]}
+{"text": "Hello? this is Sunrise Bank customer support following up on your ticket, no action needed talk soon.", "labels": []}
+{"text": "Please, just confirming your reservation for four people on Saturday, see you then let me know.", "labels": []}
+{"text": "Hey, i'm hurt and i need you.", "labels": ["DISTRESS_HOOK"]}
+{"text": "Okay so the electricity bill came, it's the normal amount, I'll handle it talk soon.", "labels": []}
+{"text": "Okay so a money laundering case has been registered against your aadhaar.", "labels": ["AUTHORITY_IMPERSONATION"]}
+{"text": "Hi, this is the narcotics control bureau, a case has been filed against you, verify your date of birth.", "labels": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
+{"text": "Listen, sorry, i think i have the wrong number let me know.", "labels": []}
+{"text": "Listen, a money laundering case has been registered against your aadhaar and what's your account pin.", "labels": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
+{"text": "Okay so mom, it's me, and don't put me on hold.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION"]}
+{"text": "Hi, there's no time to lose. load the money onto a prepaid card.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT"]}
+{"text": "Hello? hi grandpa it's your granddaughter, this is the narcotics control bureau, a case has been filed against you.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION"]}
+{"text": "hi, this is Raj from Green Energy, we have a special offer on your plan this month, no pressure have a good day.", "labels": []}
+{"text": "Please, dad, don't you recognize my voice; keep your camera on at all times until the case is closed; confirm your social security number for me.", "labels": ["RELATIONSHIP_SPOOF", "ISOLATION", "IDENTITY_PROBE"]}
+{"text": "Hey, this is Sunrise Bank confirming your appointment for tomorrow, reply to reschedule talk soon.", "labels": []}
+{"text": "Okay so mom, it's me. your parcel was seized by customs and contained illegal items. keep your camera on at all times until the case is closed.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION", "ISOLATION"]}
+{"text": "Okay so they've taken me and i'm scared, and pay with apple gift cards.", "labels": ["DISTRESS_HOOK", "UNTRACEABLE_PAYMENT"]}
+{"text": "Please, it's me, my voice sounds off because i have a cold \u2014 i'm in serious trouble \u2014 right now.", "labels": ["RELATIONSHIP_SPOOF", "DISTRESS_HOOK", "URGENCY"]}
+{"text": "reminder from the dentist, your cleaning is tomorrow morning no rush.", "labels": []}
+{"text": "Listen, hi grandpa it's your granddaughter.", "labels": ["RELATIONSHIP_SPOOF"]}
+{"text": "Hey, this is the library, the book you reserved is available for pickup.", "labels": []}
+{"text": "Please, calling about the job interview, are you free Tuesday morning see you then.", "labels": []}
+{"text": "Please, transfer the crypto now, and promise me you won't say a word.", "labels": ["UNTRACEABLE_PAYMENT", "SECRECY"]}
+{"text": "Please, hey it's Priya, are we still on for coffee this weekend see you then.", "labels": []}
+{"text": "i'm with your bank's fraud team.", "labels": ["AUTHORITY_IMPERSONATION"]}
+{"text": "Hi, it's your son calling; what's your account pin.", "labels": ["RELATIONSHIP_SPOOF", "IDENTITY_PROBE"]}
+{"text": "Hi, this is the library, the book you reserved is available for pickup no rush.", "labels": []}
+{"text": "Listen, i'm with your bank's fraud team.", "labels": ["AUTHORITY_IMPERSONATION"]}
+{"text": "Okay so this is the library, the book you reserved is available for pickup let me know.", "labels": []}
+{"text": "Hey, hey it's Priya, are we still on for coffee this weekend thanks.", "labels": []}
+{"text": "Please, hi, this is Raj from your internet provider, we have a special offer on your plan this month, no pressure no rush.", "labels": []}
+{"text": "Please, the passport office confirmed your application, no payment is required.", "labels": []}
+{"text": "Hi, it's me, just wanted to hear your voice, how are you doing thanks.", "labels": []}
+{"text": "Please, keep your camera on at all times until the case is closed. go to the store and get gift cards.", "labels": ["ISOLATION", "UNTRACEABLE_PAYMENT"]}
+{"text": "Hi, i paid you back for lunch over the usual app, check when you get a sec let me know.", "labels": []}
+{"text": "Okay so i'm with your bank's fraud team and the deadline is today and give me the verification code.", "labels": ["AUTHORITY_IMPERSONATION", "URGENCY", "IDENTITY_PROBE"]}
+{"text": "Hello? calling from MediCare Clinic to confirm your booking, nothing needed from you see you then.", "labels": []}
+{"text": "Okay so your order with Sunrise Bank is confirmed and shipping today.", "labels": []}
+{"text": "Okay so within the next hour.", "labels": ["URGENCY"]}
+{"text": "grandma it's me, your grandson, the deadline is today, nobody else can know about this.", "labels": ["RELATIONSHIP_SPOOF", "URGENCY", "SECRECY"]}
+{"text": "Hey, mom, it's me \u2014 i'm a federal agent \u2014 i need bail or they keep me locked up.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
+{"text": "Hey, go to the store and get gift cards.", "labels": ["UNTRACEABLE_PAYMENT"]}
+{"text": "Hello? your order with City Auto Repair is confirmed and shipping today call me back when you can.", "labels": []}
+{"text": "Hello? i was trying to reach Priya, sorry to bother you, have a good day.", "labels": []}
+{"text": "Hi, hi, this is David from your internet provider, we have a special offer on your plan this month, no pressure.", "labels": []}
+{"text": "Hi, do it this minute. send it by wire transfer.", "labels": ["URGENCY", "UNTRACEABLE_PAYMENT"]}
+{"text": "Please, this is the tax department, and read me the code i just texted you.", "labels": ["AUTHORITY_IMPERSONATION", "IDENTITY_PROBE"]}
+{"text": "Hey, this is Bright Telecom, you're eligible for a loyalty discount, want me to email the details love you.", "labels": []}
+{"text": "this is the tax department; i'm in jail and i need help.", "labels": ["AUTHORITY_IMPERSONATION", "DISTRESS_HOOK"]}
+{"text": "it's me, my voice sounds off because i have a cold, and western union the cash to me.", "labels": ["RELATIONSHIP_SPOOF", "UNTRACEABLE_PAYMENT"]}
+{"text": "Hey, promise me you won't say a word.", "labels": ["SECRECY"]}
+{"text": "Okay so calling about the job interview, are you free Tuesday morning.", "labels": []}
+{"text": "this is customs and border protection; don't mention this to the family.", "labels": ["AUTHORITY_IMPERSONATION", "SECRECY"]}
+{"text": "Okay so i'm hurt and i need you; this can't wait until tomorrow.", "labels": ["DISTRESS_HOOK", "URGENCY"]}
+{"text": "within the next hour \u2014 keep this between us.", "labels": ["URGENCY", "SECRECY"]}
+{"text": "hi grandma, just checking in, how was your walk today.", "labels": []}
+{"text": "Hi, it's me, just wanted to hear your voice, how are you doing let me know.", "labels": []}
+{"text": "dad, don't you recognize my voice; i'm a federal agent; you have to act fast.", "labels": ["RELATIONSHIP_SPOOF", "AUTHORITY_IMPERSONATION", "URGENCY"]}
+{"text": "Hello? what's your account pin.", "labels": ["IDENTITY_PROBE"]}
+{"text": "Hello? this is Sunrise Bank, your service visit is scheduled for Tuesday morning talk soon.", "labels": []}
+{"text": "it's your son calling; hurry, we can't wait.", "labels": ["RELATIONSHIP_SPOOF", "URGENCY"]}
+{"text": "Listen, it's the vet, your dog's vaccination is due next week have a good day.", "labels": []}
+{"text": "Listen, transfer the funds to a safe account for verification.", "labels": ["UNTRACEABLE_PAYMENT"]}
+{"text": "Okay so confirm your social security number for me.", "labels": ["IDENTITY_PROBE"]}

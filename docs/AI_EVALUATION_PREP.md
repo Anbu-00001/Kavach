@@ -98,6 +98,18 @@ until very late. We're strongest on **coercion** scams (vishing, digital arrest,
 tech-support) and we say so. The Watchword and "call back on a trusted number" prompt are the
 safety net for what the model can't see.
 
+**Q. Your actual user is an elderly, often illiterate person — they can't read "Likely a scam". So what good is it?**
+This is the question we built the hardest for. In India half the illiterate population is over 50,
+only ~11% of rural elders are digitally literate, and 60% of 2024 fraud victims were making their
+first digital payment — the victim usually can't read our screen. So when risk rises Kavach **speaks
+the warning aloud in their own language** (Hindi/Tamil/Telugu/English) and **buzzes the phone hard**:
+"Stop. This may be a scam. Don't send money or share any code. Hang up and call your family." Clips
+are pre-recorded and bundled — no TTS voice needed on a cheap phone, nothing synthesised at runtime,
+still no network. Three channels at once — colour, voice, vibration — so it reaches someone who can't
+read, see well, or hear well. Setup is done once by a literate relative; the elder just answers calls.
+Validated on the OPPO A18 (it speaks + vibrates on the accessibility audio stream). The HCI4D research
+is unambiguous: for low-literacy users, *non-text, voice, local language* — which is exactly this.
+
 **Q. What about false alarms on a real, anxious call — "Dad, I'm in hospital, send money"?**
 It may well flag that as CAUTION — distress + a money ask is genuinely scam-shaped, and we'd rather
 over-warn than miss. Crucially we **never block**; we surface a plain-language nudge and the

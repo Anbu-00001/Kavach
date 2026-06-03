@@ -115,11 +115,26 @@ We'd rather a judge hear this from us than find it themselves:
    audio played near the phone (room/speakerphone). Whether Android hands a
    third-party app live call audio is OEM-dependent and **still untested on the
    demo device** — listed openly, not hidden.
-4. **New scam *vocabulary* (digital-arrest "safe account", legal-threat narratives)
-   is wired into the taxonomy cues and the reference detector today, but the neural
-   model only emits its original 8 tactics** until it's retrained on the enriched
-   labels (`core/build_dataset.py` → `core/train_classifier.py`; data is ready).
-   The reference detector already flags the canonical digital-arrest script HIGH.
+4. **Digital-arrest vocabulary — investigated end-to-end, shipped model kept on
+   purpose.** We added digital-arrest / long-con phrasings (CBI, Aadhaar, "safe
+   account for verification", "stay on video", investment lure) *and* matching
+   benign hard-negatives to `core/build_dataset.py`, regenerated the data, and
+   retrained the English MiniLM (`core/eval_candidate.py` scores a candidate vs the
+   shipped model on a 14-line battery). Findings, stated plainly:
+   - The **shipped semantic model already passes 13/14** — it generalises
+     "CBI / money-laundering / safe account / digital arrest" without any retrain
+     (MiniLM is semantic, not keyword), and keeps every legit Aadhaar/customs/
+     deposit/investment mention SAFE. It only misses "parcel seized by customs".
+   - A clean retrain (LR 3e-5; the script's `bert-tiny` default 5e-4 collapses
+     MiniLM to all-SAFE — fixed-note added) reaches **14/14** (gains the customs
+     case) but is calibrated lower — it downgrades the headline "digital arrest,
+     stay on video" line from HIGH → CAUTION. Net: **not a clear win**, so we keep
+     the validated weights every on-device behaviour was checked against and retain
+     the candidate as an artifact. The reference detector flags the full
+     digital-arrest script HIGH regardless.
+   - The **multilingual XLM-R** model (the one the live Indic demo and these eval
+     tables use) is a GPU fine-tune (`core/colab_train_multilingual.py`), run on
+     Colab — deliberately not on the dev laptop.
 
 ## Reproduce
 

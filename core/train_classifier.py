@@ -86,6 +86,9 @@ def main() -> int:
     ap.add_argument("--model", default="prajjwal1/bert-tiny")
     ap.add_argument("--epochs", type=int, default=8)
     ap.add_argument("--batch", type=int, default=16)
+    # NOTE: 5e-4 suits the tiny default (bert-tiny). For a real transformer like
+    # all-MiniLM-L6-v2, use ~3e-5 — higher LRs collapse the head to all-zeros
+    # (val recall 0%, loss flat). See docs/EVALUATION.md "retrain" notes.
     ap.add_argument("--lr", type=float, default=5e-4)
     ap.add_argument("--out", default=os.path.join(HERE, "model", "intent"))
     ap.add_argument("--threads", type=int, default=5,

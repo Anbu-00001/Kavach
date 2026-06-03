@@ -88,6 +88,24 @@ per-window approach, and it's unit-tested on the slow-burn flip. Full numbers an
 **[docs/EVALUATION.md](docs/EVALUATION.md)** (no demo-clip cherry-picking — independent FTC +
 BothBosu datasets, the real on-device model).
 
+### It warns the person who actually gets scammed — out loud, in their language
+
+Here's the uncomfortable truth our pretty on-screen verdict ignores: in India **half the
+illiterate population is over 50**, only **~11% of rural elders are digitally literate**, and
+**60% of 2024 fraud victims were making their first-ever digital payment** (FTC/I4C; HCI4D
+research is blunt — *non-text, voice, local language*). The person losing the money usually
+**cannot read** "Likely a scam."
+
+So when the risk rises, Kavach **speaks the warning aloud in the user's own language** —
+Hindi, Tamil, Telugu or English — and **buzzes the phone hard**: *"Stop. This call may be a
+scam. Do not send money or share any code. Hang up and call your family."* The clips are
+**pre-recorded and bundled** (no TTS voice needed on a ₹6,000 phone, nothing synthesised at
+runtime, still no network) and the buzz uses a distinct triple-pulse on HIGH. **Validated on
+the OPPO A18:** the demo escalates and the phone speaks + vibrates on `STREAM_ACCESSIBILITY`.
+Three channels — colour, voice, vibration — so it lands even if you can't read, can't see well,
+or can't hear well. Built natively (`SpokenAlert.kt`); the only added permission is `VIBRATE`,
+so the **no-internet** guarantee stands.
+
 ## 4. How it works — the pipeline, 100% on-device
 
 ```mermaid

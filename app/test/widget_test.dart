@@ -28,6 +28,15 @@ Future<void> tapLabel(WidgetTester tester, String label) async {
   await tester.pump(const Duration(milliseconds: 400));
 }
 
+/// Like [tapLabel] but first scrolls the target into view — several controls
+/// (e.g. "See how it works", the live-shield actions) sit below the fold in a
+/// scroll body, exactly as a real user would scroll to reach them.
+Future<void> tapInBody(WidgetTester tester, String label) async {
+  await tester.ensureVisible(find.text(label));
+  await tester.pump();
+  await tapLabel(tester, label);
+}
+
 void main() {
   group('first run', () {
     testWidgets('fresh install boots to onboarding', (tester) async {
@@ -91,7 +100,7 @@ void main() {
     testWidgets('climbs SAFE → CAUTION → HIGH and alerts the Guardian', (tester) async {
       await bootWith(tester, {'onboarded': true, 'armed': true});
 
-      await tapLabel(tester, 'See how it works'); // → live shield, t=0 (SAFE)
+      await tapInBody(tester, 'See how it works'); // → live shield, t=0 (SAFE)
       expect(find.text('Listening'), findsOneWidget);
 
       // t≈7s — distress + urgency tip it to CAUTION.
@@ -104,18 +113,18 @@ void main() {
       expect(richTextContaining('has been told about this call'), findsOneWidget);
 
       // Hang up → summary.
-      await tapLabel(tester, 'Hang up & call back');
+      await tapInBody(tester, 'Hang up & call back');
       expect(find.text("You're safe."), findsOneWidget);
-      await tapLabel(tester, 'Back to home');
+      await tapInBody(tester, 'Back to home');
       expect(find.text('Guardian Mode is on.'), findsOneWidget);
     });
 
     testWidgets('"I\'m safe" dismiss returns to an armed home', (tester) async {
       await bootWith(tester, {'onboarded': true, 'armed': true});
-      await tapLabel(tester, 'See how it works');
+      await tapInBody(tester, 'See how it works');
       await tester.pump(const Duration(milliseconds: 8000)); // into CAUTION/HIGH
 
-      await tapLabel(tester, "I'm safe — dismiss");
+      await tapInBody(tester, "I'm safe — dismiss");
       expect(find.text('Guardian Mode is on.'), findsOneWidget);
     });
   });

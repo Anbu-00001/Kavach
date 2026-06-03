@@ -39,3 +39,6 @@ local.properties
 *.pth
 *.bin
 *.safetensors
+
+# retrain candidate artifact (90MB, not shipped — kept locally for comparison)
+core/model/intent_candidate/

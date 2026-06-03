@@ -15,6 +15,7 @@ import 'engine/live_listener.dart';
 import 'engine/whisper_listener.dart';
 import 'engine/guardian_service.dart';
 import 'native/call_guard.dart';
+import 'native/spoken_alert.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,26 @@ class _KavachAppState extends State<KavachApp> {
   bool demoActive = false;
   bool minimal = false;
   Verdict live = buildVerdict('HIGH');
+
+  // Spoken-warning escalation: most of India's scam victims are elderly and can't
+  // read the screen, so when the risk *rises* we say it aloud in their language and
+  // buzz the phone. Tracks the highest level already announced this call so we
+  // speak once per escalation (SAFE→CAUTION→HIGH), not on every transcript window.
+  final SpokenAlert _voice = SpokenAlert();
+  String _spokenLevel = 'SAFE';
+  static const Map<String, int> _levelRank = {'SAFE': 0, 'CAUTION': 1, 'HIGH': 2};
+
+  /// Speak + buzz when [level] is higher than anything announced so far this call;
+  /// reset the tracker when the call returns to SAFE (new call / hang-up).
+  void _announce(String level) {
+    final rank = _levelRank[level] ?? 0;
+    if (rank > (_levelRank[_spokenLevel] ?? 0)) {
+      _spokenLevel = level;
+      _voice.alert(level, liveLang);
+    } else if (rank == 0) {
+      _spokenLevel = 'SAFE';
+    }
+  }
 
   Store get _store => widget.store;
 
@@ -237,6 +258,7 @@ class _KavachAppState extends State<KavachApp> {
         live = Verdict('SAFE', const [], const [], deriveExp('SAFE', const []), 'idle', 0.0, live: true);
         screen = 'live';
       });
+      _announce('SAFE'); // fresh call → arm the next escalation to speak
     }
   }
 
@@ -257,6 +279,7 @@ class _KavachAppState extends State<KavachApp> {
     final lines = [for (final u in tr) {'who': 'them', 'line': u}];
     if (kDebugMode) debugPrint('KAVACH_UI guard verdict: $level ${score.toStringAsFixed(2)} beat=${data['beat']}');
     setState(() => live = Verdict(level, lines, tactics, deriveExp(level, tactics), level == 'HIGH' ? 'sent' : 'idle', score, live: true));
+    _announce(level);
   }
 
   /// Rebuild the live shield from the listener's rolling-peak verdict + transcript.
@@ -273,6 +296,7 @@ class _KavachAppState extends State<KavachApp> {
     final guardian = level == 'HIGH' ? 'sent' : 'idle';
     if (mounted) {
       setState(() => live = Verdict(level, lines, tactics, deriveExp(level, tactics), guardian, r?.score ?? 0.0, live: true));
+      _announce(level);
     }
   }
 
@@ -339,6 +363,7 @@ class _KavachAppState extends State<KavachApp> {
             live: true,
           );
         });
+        _announce(peakLevel); // speak the warning aloud as the demo escalates
       }));
     }
   }
@@ -348,6 +373,7 @@ class _KavachAppState extends State<KavachApp> {
     liveListener?.stop();
     if (guarding) stopGuard();
     demoActive = false;
+    _spokenLevel = 'SAFE';
     setState(() {
       sumLevel = live.level;
       sumTactics = live.tactics;

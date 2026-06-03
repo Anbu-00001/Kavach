@@ -36,6 +36,14 @@ class MainActivity : FlutterActivity() {
                     CallAlert.show(applicationContext, num, false)
                     result.success(null)
                 }
+                // Speak a pre-recorded safety warning aloud + buzz, in the user's
+                // language — for users who can't read the screen.
+                "speakAlert" -> {
+                    val level = call.argument<String>("level") ?: "HIGH"
+                    val lang = call.argument<String>("lang") ?: "en"
+                    SpokenAlert.play(applicationContext, level, lang)
+                    result.success(null)
+                }
                 // Did we launch from a "Shield this call" tap?
                 "consumePendingGuard" -> {
                     val p = Prefs.pendingGuard(this)

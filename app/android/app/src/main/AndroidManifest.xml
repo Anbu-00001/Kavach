@@ -16,6 +16,10 @@
          INTERNET — the number and your contacts never leave the phone. -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <!-- VIBRATE: buzz the phone on a scam warning, for users who can't read or
+         clearly see/hear the screen. A normal (non-network) permission — the
+         NO-INTERNET stance is unaffected. -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <application
         android:label="kavach"
         android:name="${applicationName}"

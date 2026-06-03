@@ -39,6 +39,14 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
   }
 
+  // Scrolls the target into view first — body controls (the live-demo entry and
+  // the shield actions) sit below the fold, just as a user would scroll to them.
+  Future<void> tapInBody(WidgetTester tester, String label) async {
+    await tester.ensureVisible(find.text(label));
+    await tester.pump();
+    await tapLabel(tester, label);
+  }
+
   testWidgets('no overflow across setup screens at 360dp', (tester) async {
     await boot(tester, {});
     await tapLabel(tester, 'Turn on protection'); // watchword
@@ -49,10 +57,10 @@ void main() {
 
   testWidgets('no overflow across live demo + summary at 360dp', (tester) async {
     await boot(tester, {'onboarded': true, 'armed': true});
-    await tapLabel(tester, 'See how it works');
+    await tapInBody(tester, 'See how it works');
     await tester.pump(const Duration(milliseconds: 7200)); // CAUTION
     await tester.pump(const Duration(milliseconds: 8200)); // HIGH
-    await tapLabel(tester, 'Hang up & call back'); // summary
+    await tapInBody(tester, 'Hang up & call back'); // summary
     expect(tester.takeException(), isNull);
   });
 }

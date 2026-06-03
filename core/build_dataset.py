@@ -41,12 +41,29 @@ PHRASES = {
         "put it on a steam card", "send it through zelle to this number",
         "go to the store and get gift cards", "western union the cash to me",
         "load the money onto a prepaid card", "transfer the crypto now",
+        # digital-arrest money move — "verification / safe account" instead of a gift card
+        "transfer the funds to a safe account for verification",
+        "deposit the money in this verification account to clear your name",
+        "move your savings to a secure rbi account while we investigate",
+        "it is a fully refundable security deposit, you will get it back",
+        "send the amount to this government account for safekeeping",
+        # pig-butchering / investment lure
+        "invest in this trading platform with guaranteed returns",
+        "put your savings into this opportunity and double your money",
     ],
     "AUTHORITY_IMPERSONATION": [
         "this is officer ramirez from the police", "i'm calling from the irs",
         "this is the tax department", "i'm with your bank's fraud team",
         "there is a warrant for your arrest", "this is the social security administration",
         "i'm a federal agent", "this is customs and border protection",
+        # India "digital arrest" authority scripts
+        "this is the cbi cyber crime branch",
+        "i'm calling from the enforcement directorate",
+        "a money laundering case has been registered against your aadhaar",
+        "your parcel was seized by customs and contained illegal items",
+        "your sim card is linked to a criminal investigation",
+        "you are under digital arrest and must cooperate",
+        "this is the narcotics control bureau, a case has been filed against you",
     ],
     "DISTRESS_HOOK": [
         "i'm in jail and i need help", "i've been in a terrible accident",
@@ -58,6 +75,11 @@ PHRASES = {
         "don't hang up the phone", "stay on the line with me the whole time",
         "don't call anyone else", "keep me on the line", "don't put me on hold",
         "whatever you do, don't end this call", "don't talk to anyone about this call",
+        # digital-arrest isolation — hours/days on video, no contact with family
+        "stay on this video call for the next few days",
+        "keep your camera on at all times until the case is closed",
+        "do not disconnect or leave the room",
+        "you cannot tell your family, this is a confidential investigation",
     ],
     "IDENTITY_PROBE": [
         "read me the code i just texted you", "what's the one-time password you got",
@@ -115,6 +137,13 @@ LEGIT_HARD = [
     "we split the dinner bill evenly, I'll send you your share later",
     "the bank app is showing your new card was delivered, activate it whenever",
     "mom transferred you some birthday money, it should show up tomorrow",
+    # benign mentions of the exact words digital-arrest scams abuse — must NOT flag
+    "your aadhaar update was successful, nothing further is needed from you",
+    "customs cleared your parcel, it'll be delivered tomorrow with nothing to pay",
+    "i moved the deposit to our joint account like we agreed earlier",
+    "your investment account statement for this month is ready to view whenever",
+    "just a reminder no bank or police will ever ask you to move money over the phone",
+    "the passport office confirmed your application, no payment is required",
 ]
 
 # Targeted hard negatives for the false-positive modes found on real conversational data:
