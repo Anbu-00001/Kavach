@@ -1,0 +1,19 @@
+Kavach — RELEASE APK permission audit (privacy-by-architecture proof)
+Generated: 2026-06-04 00:17Z  |  APK: app-release.apk (344M)
+Command: aapt dump permissions app-release.apk
+----------------------------------------------------------------------
+uses-permission: name='android.permission.RECORD_AUDIO'
+uses-permission: name='android.permission.FOREGROUND_SERVICE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE_MICROPHONE'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='android.permission.READ_CONTACTS'
+uses-permission: name='android.permission.SYSTEM_ALERT_WINDOW'
+uses-permission: name='android.permission.VIBRATE'
+uses-permission: name='android.permission.RECEIVE_BOOT_COMPLETED'
+uses-permission: name='android.permission.WAKE_LOCK'
+permission: dev.kavach.kavach.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission: name='dev.kavach.kavach.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
+----------------------------------------------------------------------
+android.permission.INTERNET present: 0  (0 = the app physically cannot transmit)
+Note: RECEIVE_BOOT_COMPLETED + WAKE_LOCK come from flutter_background_service
+(always-on guardian); the DYNAMIC_RECEIVER perm is androidx-internal. None are network permissions.
