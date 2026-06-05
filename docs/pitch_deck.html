@@ -50,6 +50,46 @@
   .hint{position:fixed; bottom:3.2vh; left:8vw; color:#48566a; font-size:.85rem}
   .grad{background:linear-gradient(90deg,#fff,#9fd0ff); -webkit-background-clip:text; background-clip:text; color:transparent}
 
+  /* ── on-device pipeline flow ── */
+  .flow{display:flex; align-items:stretch; gap:0; margin:3vh 0 2vh}
+  .node{flex:1; background:#0f1620; border:1px solid var(--line); border-radius:14px;
+    padding:1.6vh 1vw; display:flex; flex-direction:column; gap:.6vh; min-width:0}
+  .node .ic{font-size:1.7rem; line-height:1}
+  .node .nt{font-weight:850; color:#eef2f6; font-size:clamp(.95rem,1.15vw,1.2rem); letter-spacing:.3px}
+  .node .ns{color:var(--muted); font-size:clamp(.72rem,.82vw,.9rem); line-height:1.3}
+  .node.a{border-color:var(--accent)} .node.g{border-color:var(--green)} .node.r{border-color:var(--red)}
+  .node .kbadge{position:absolute}
+  .farrow{display:flex; align-items:center; justify-content:center; color:var(--accent);
+    font-size:1.7rem; font-weight:900; padding:0 .35vw; flex:0 0 auto}
+  .flowfoot{display:inline-flex; align-items:center; gap:.6vw; margin-top:1.5vh; padding:.6em 1em;
+    border:1px solid var(--green); border-radius:999px; color:#bff0d2; font-weight:700; font-size:1rem; background:#0e1a14}
+  .flowfoot .dot{width:.6em; height:.6em; border-radius:50%; background:var(--green)}
+
+  /* ── occlusion attribution bars ── */
+  .attrib{display:flex; flex-direction:column; gap:1.1vh; margin-top:1vh}
+  .attrib .aw{display:flex; align-items:center; gap:1vw}
+  .attrib .lbl{width:9ch; text-align:right; font-weight:800; color:#eef2f6; font-size:1.05rem; flex:0 0 auto}
+  .attrib .track{flex:1; height:26px; background:#0f1620; border:1px solid var(--line); border-radius:7px; overflow:hidden}
+  .attrib .fill{height:100%; border-radius:7px 0 0 7px; background:linear-gradient(90deg,var(--red),var(--amber))}
+  .attrib .fill.low{background:linear-gradient(90deg,#3a4a5c,#566)}
+  .attrib .pct{width:6ch; color:var(--muted); font-variant-numeric:tabular-nums; font-size:.95rem; flex:0 0 auto}
+  .sentence{font-size:1.4rem; color:#cfd8e2; margin-bottom:1vh}
+  .sentence .hot{background:var(--red); color:#fff; padding:.05em .35em; border-radius:6px; font-weight:800}
+
+  /* ── cumulative risk timeline ── */
+  .tl{display:flex; align-items:stretch; gap:0; margin:2.5vh 0 1vh}
+  .twin{flex:1; display:flex; flex-direction:column; gap:.7vh; padding:1.4vh .9vw; border:1px solid var(--line);
+    border-radius:12px; background:#0f1620; min-width:0}
+  .twin .when{color:var(--accent); font-weight:800; font-size:.82rem; letter-spacing:.5px}
+  .twin .said{color:#d7dee6; font-size:.92rem; line-height:1.3; font-style:italic}
+  .twin .tac{margin-top:auto; font-size:.78rem; color:#cfe3ff; font-weight:700}
+  .tl .farrow{align-self:center}
+  .meter{display:flex; height:30px; border-radius:8px; overflow:hidden; border:1px solid var(--line); margin-top:1.5vh}
+  .meter span{display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.85rem; color:#0b0f14}
+  .meter .s-safe{background:#274; color:#bff0d2; flex:1}
+  .meter .s-warn{background:var(--amber); flex:1}
+  .meter .s-high{background:var(--red); color:#fff; flex:1.4}
+
   /* print → one landscape page per slide, all visible */
   @media print{
     @page{size:1280px 720px; margin:0}
@@ -73,7 +113,7 @@
         <span class="tag">On-device</span><span class="tag">No internet permission</span>
         <span class="tag">12 languages</span><span class="tag">Runs on a ₹6,000 phone</span>
       </div>
-      <p class="muted" style="margin-top:1vh">Beyond Tomorrow Summit 2026 · Team [your name] · [GitHub link]</p>
+      <p class="muted" style="margin-top:1vh">Beyond Tomorrow Summit 2026 · Anbuchelvan Ganesan · github.com/Anbu-00001/Kavach</p>
     </div>
     <div class="bar"></div>
   </section>
@@ -115,6 +155,24 @@
     <div class="bar"></div>
   </section>
 
+  <!-- 4b — PIPELINE / HOW IT WORKS -->
+  <section class="slide">
+    <h2><span class="pre">How it works — end to end</span>Five stages, <span class="grad">all on one phone</span></h2>
+    <div class="flow">
+      <div class="node g"><span class="ic">🎤</span><span class="nt">LISTEN</span><span class="ns">Speaker audio → offline ASR (Vosk + Whisper-tiny) with Silero VAD. ~100 languages.</span></div>
+      <div class="farrow">→</div>
+      <div class="node"><span class="ic">🔤</span><span class="nt">TOKENIZE</span><span class="ns">Rust SentencePiece over <code>dart:ffi</code> — exact Python parity, 12 languages.</span></div>
+      <div class="farrow">→</div>
+      <div class="node a"><span class="ic">🧠</span><span class="nt">CLASSIFY</span><span class="ns">MiniLM int8 ONNX (22.9 MB) scores the live transcript on 8 manipulation tactics.</span></div>
+      <div class="farrow">→</div>
+      <div class="node a"><span class="ic">⚖️</span><span class="nt">FUSE</span><span class="ns">Noisy-OR + combo boost + a decaying memory across the <i>whole</i> call.</span></div>
+      <div class="farrow">→</div>
+      <div class="node r"><span class="ic">🔊</span><span class="nt">ACT</span><span class="ns">Speaks the warning aloud + buzzes, shows the words that triggered it.</span></div>
+    </div>
+    <span class="flowfoot"><span class="dot"></span> Every step runs on-device · <b>no INTERNET permission</b> · the entire demo is in airplane mode</span>
+    <div class="bar"></div>
+  </section>
+
   <!-- 5 — LIVE DEMO -->
   <section class="slide">
     <div class="row">
@@ -146,19 +204,39 @@
     <div class="bar"></div>
   </section>
 
-  <!-- 7 — REAL MODEL -->
+  <!-- 7 — REAL MODEL / EXPLAINABILITY -->
   <section class="slide">
     <div class="row">
       <div class="col">
-        <h2><span class="pre">It's a real model, not a script</span>Show your work</h2>
-        <ul>
-          <li class="b">Tap any verdict → Kavach highlights the <b>exact words</b> it relied on — here, <b>"gift cards."</b></li>
-          <li class="b">Found by <b>occlusion attribution</b>: remove each word, re-score on-device, see what moves it. The model's real reasoning.</li>
-          <li class="b">Per-tactic confidence is live model output — explicitly <b>"not a script."</b></li>
-        </ul>
+        <h2><span class="pre">Explainable — a real model, not a script</span>It shows the words it relied on</h2>
+        <p class="sentence">"buy <span class="hot">gift cards</span> and share the <span class="hot">code</span> now, don't tell anyone"</p>
+        <p class="muted" style="margin:-.5vh 0 1.5vh; font-size:.95rem">Occlusion attribution: remove each word → re-score on-device → rank by how far the risk drops.</p>
+        <div class="attrib">
+          <div class="aw"><span class="lbl">gift cards</span><div class="track"><div class="fill" style="width:88%"></div></div><span class="pct">−0.44</span></div>
+          <div class="aw"><span class="lbl">code</span><div class="track"><div class="fill" style="width:48%"></div></div><span class="pct">−0.24</span></div>
+          <div class="aw"><span class="lbl">don't tell</span><div class="track"><div class="fill" style="width:34%"></div></div><span class="pct">−0.17</span></div>
+          <div class="aw"><span class="lbl">now</span><div class="track"><div class="fill low" style="width:14%"></div></div><span class="pct">−0.07</span></div>
+        </div>
+        <p class="muted" style="margin-top:2vh">Per-tactic confidence is live model output — the user sees <b>why</b>, not a canned line.</p>
       </div>
       <div class="col" style="text-align:center"><img class="phone" src="screenshots/7_real_model_evidence.png" alt="What triggered this — gift cards"></div>
     </div>
+    <div class="bar"></div>
+  </section>
+
+  <!-- 7b — CUMULATIVE RISK -->
+  <section class="slide">
+    <h2><span class="pre">The hard case — the slow burn</span>It remembers the <span class="grad">whole call</span>, not one sentence</h2>
+    <p class="lead" style="max-width:64ch; margin-bottom:1vh">A digital-arrest scam spreads the trap over 15 minutes. Each line alone looks only mildly off — so single-sentence detectors miss it. Kavach keeps a <b>decaying memory</b> of every tactic and re-fuses them, so the pattern still adds up.</p>
+    <div class="tl">
+      <div class="twin"><span class="when">0:30 · AUTHORITY</span><span class="said">"This is CBI. Your Aadhaar is linked to a money-laundering case."</span><span class="tac">→ CAUTION (0.6)</span></div>
+      <div class="farrow">→</div>
+      <div class="twin"><span class="when">6:10 · ISOLATION</span><span class="said">"Stay on this video call. Don't tell your family — it's confidential."</span><span class="tac">→ still CAUTION</span></div>
+      <div class="farrow">→</div>
+      <div class="twin"><span class="when">14:00 · PAYMENT</span><span class="said">"Transfer the money to this 'safe account' to clear your name."</span><span class="tac">→ tactics combine</span></div>
+    </div>
+    <div class="meter"><span class="s-safe">SAFE</span><span class="s-warn">CAUTION (per-sentence)</span><span class="s-high">HIGH — cumulative ⚑</span></div>
+    <p class="muted" style="margin-top:1.6vh">On 1,378 real FTC robocalls this lifts recall from <b>28% → 40%</b> (+43%) versus scoring one window at a time. Unit-tested on the slow-burn flip.</p>
     <div class="bar"></div>
   </section>
 
@@ -224,7 +302,7 @@
       <h1 style="max-width:18ch">Catch the script. Speak up. Before the money's gone.</h1>
       <p class="lead muted" style="max-width:40ch">On-device · offline · multilingual · accessible · private by architecture. Validated on real hardware.</p>
       <div>
-        <span class="tag">GitHub: [link]</span><span class="tag">Demo video: [link]</span><span class="tag">Team: [names]</span>
+        <span class="tag">GitHub: github.com/Anbu-00001/Kavach</span><span class="tag">Anbuchelvan Ganesan</span>
       </div>
     </div>
     <div class="bar"></div>
